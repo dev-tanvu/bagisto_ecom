@@ -52,6 +52,10 @@ class ProductImage extends Model implements ProductImageContract
      */
     public function url()
     {
+        if (config('filesystems.default') === 'cloudinary') {
+            return cloudinary_url($this->path);
+        }
+
         return Storage::url($this->path);
     }
 

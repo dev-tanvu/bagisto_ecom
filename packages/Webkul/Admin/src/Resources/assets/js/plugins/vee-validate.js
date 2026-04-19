@@ -150,6 +150,12 @@ export default {
 
         defineRule("", () => true);
 
+        /**
+         * Nullable rule - allows empty/null values to pass validation.
+         * This is needed because Laravel's 'nullable' rule is passed to frontend.
+         */
+        defineRule("nullable", () => true);
+
         configure({
             /**
              * Built-in error messages and custom error messages are available. Multiple

@@ -160,15 +160,24 @@ class ProductController extends Controller
      */
     public function update(ProductForm $request, int $id)
     {
-        Event::dispatch('catalog.product.update.before', $id);
+        try {
+            Event::dispatch('catalog.product.update.before', $id);
 
-        $product = $this->productRepository->update($request->all(), $id);
+            $product = $this->productRepository->update($request->all(), $id);
 
-        Event::dispatch('catalog.product.update.after', $product);
+            Event::dispatch('catalog.product.update.after', $product);
 
-        session()->flash('success', trans('admin::app.catalog.products.update-success'));
+            session()->flash('success', trans('admin::app.catalog.products.update-success'));
 
-        return redirect()->route('admin.catalog.products.index');
+            return redirect()->route('admin.catalog.products.index');
+        } catch (\Exception $e) {
+            \Log::error('Product update failed: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            
+            session()->flash('error', 'Failed to save product: ' . $e->getMessage());
+            
+            return redirect()->back()->withInput();
+        }
     }
 
     /**

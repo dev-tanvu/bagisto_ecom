@@ -19,7 +19,7 @@
     </v-mini-cart>
 <?php endif; ?>
 
-<?php if (! $__env->hasRenderedOnce('88648d9c-0281-45be-832d-8f2dc43a540b')): $__env->markAsRenderedOnce('88648d9c-0281-45be-832d-8f2dc43a540b');
+<?php if (! $__env->hasRenderedOnce('2fa256f3-9593-4e61-b403-8297bc43c7f3')): $__env->markAsRenderedOnce('2fa256f3-9593-4e61-b403-8297bc43c7f3');
 $__env->startPush('scripts'); ?>
     <script
         type="text/x-template"

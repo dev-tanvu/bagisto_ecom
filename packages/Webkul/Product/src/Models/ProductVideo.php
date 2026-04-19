@@ -52,6 +52,10 @@ class ProductVideo extends Model implements ProductVideoContract
      */
     public function url()
     {
+        if (config('filesystems.default') === 'cloudinary') {
+            return cloudinary_url($this->path);
+        }
+
         return Storage::url($this->path);
     }
 

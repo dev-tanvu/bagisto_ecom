@@ -143,6 +143,10 @@ class ProductDataGrid extends DataGrid
                     return;
                 }
 
+                if (config('filesystems.default') === 'cloudinary') {
+                    return cloudinary_url($row->base_image, ['w' => 300, 'q' => 'auto']);
+                }
+
                 return Storage::url($row->base_image);
             },
         ]);
@@ -246,7 +250,7 @@ class ProductDataGrid extends DataGrid
             $this->addAction([
                 'icon' => 'icon-delete',
                 'title' => trans('admin::app.catalog.products.index.datagrid.delete'),
-                'method' => 'POST',
+                'method' => 'DELETE',
                 'url' => function ($row) {
                     return route('admin.catalog.products.delete', $row->product_id);
                 },

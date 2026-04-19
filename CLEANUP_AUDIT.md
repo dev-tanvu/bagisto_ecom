@@ -1,9 +1,99 @@
 # NextOutfit Codebase Cleanup Audit
 
 **Date:** 2026-04-19  
-**Status:** In Progress - Complex Features Deferred  
+**Status:** In Progress - Bug Fixes After Cleanup  
 **Database:** frooxi_ecom  
-**Last Updated:** After Quick Wins + Medium Complexity cleanup
+**Last Updated:** Product form save button fix (vee-validate nullable rule)
+
+---
+
+## 🐛 BUGS FOUND DURING CLEANUP
+
+### Critical Bugs (Must Fix):
+
+#### 1. ❌ **Product Save Button Not Working** - FIXED ✅
+**Date Found:** 2026-04-19  
+**Severity:** CRITICAL - Blocks product creation/editing  
+**Root Cause:** 
+- When we hid/removed product form fields (Tax Category, Brand, Shipping, Customer Group Pricing, Customizable Options), the validation rules for these fields were STILL being passed to the frontend
+- `ProductForm.php` was adding `'nullable'` validation rule to database attributes
+- vee-validate (JavaScript validation library) did NOT have a `nullable` rule defined
+- Result: JavaScript error "No such validator 'nullable' exists" prevented form submission
+
+**Affected Files:**
+- `packages/Webkul/Admin/src/Resources/assets/js/plugins/vee-validate.js` - Missing nullable rule
+- `packages/Webkul/Admin/src/Http/Requests/ProductForm.php` - Adds nullable rule to attributes
+- `packages/Webkul/Admin/src/Resources/views/catalog/products/edit/controls.blade.php` - Passes `$attribute->validations` to frontend
+
+**Fix Applied:**
+- ✅ Added `defineRule("nullable", () => true);` to vee-validate.js
+- ✅ Rebuilt JavaScript assets (`npm run build`)
+- ✅ Added error display to product edit form for better debugging
+- ✅ Added try-catch with logging to ProductController::update()
+
+**Status:** ✅ FIXED - Product save button now works
+
+#### 2. ❌ **Individual Product Delete Not Working** - FIXED ✅
+**Date Found:** 2026-04-19  
+**Severity:** HIGH - Can't delete products individually  
+**Root Cause:** 
+- ProductDataGrid delete action used `'method' => 'POST'`
+- Route defined as `Route::delete('edit/{id}', 'destroy')`
+- HTTP method mismatch caused route not to match
+
+**Fix Applied:**
+- ✅ Changed ProductDataGrid.php line 249: `'method' => 'DELETE'`
+
+**Status:** ✅ FIXED - Individual delete now works
+
+#### 3. ❌ **Product Form Showing Removed Fields** - FIXED ✅
+**Date Found:** 2026-04-19  
+**Severity:** MEDIUM - UI shows fields we removed  
+**Root Cause:**
+- Hidden attributes check was in controls.blade.php (too late - after label rendered)
+- Labels were being rendered in edit.blade.php before controls.blade.php was called
+- Entire groups (Tax Categories, Brands, Shipping) were not being skipped
+
+**Fix Applied:**
+- ✅ Added hidden attributes check in edit.blade.php BEFORE label rendering (line 206-229)
+- ✅ Added entire group skips: 'Tax Categories', 'Brands', 'Shipping' (line 160)
+- ✅ Added price group skip to prevent duplicate fields (line 203)
+- ✅ Added inventories group skip to prevent duplicate Manage Stock toggle (line 209)
+
+**Status:** ✅ FIXED - Form only shows needed fields
+
+#### 4. ❌ **Hidden Required Fields Blocking Product Save** - FIXED ✅
+**Date Found:** 2026-04-19  
+**Severity:** CRITICAL - Cannot save products  
+**Root Cause:**
+- We hid several form fields (Tax Category, Brand, Weight, Shipping dimensions, etc.) from the UI
+- BUT these fields were still marked as `is_required = 1` in the database `attributes` table
+- Laravel validation still enforced these required fields even though they're hidden
+- Error: "The weight field is required" - user couldn't see or fill the field
+
+**Hidden Fields That Were Required:**
+- `weight` (is_required = 1) ← This was the main blocker
+- `tax_category_id`, `brand`, `meta_title`, `meta_keywords`, `meta_description`
+- `allow_rma`, `rma_rule_id`, `length`, `width`, `height`, `shipping`
+- `customer_group_prices`, `manage_stock`
+
+**Fix Applied:**
+- ✅ Ran SQL: `UPDATE attributes SET is_required = 0 WHERE code IN (...all hidden fields...)`
+- ✅ Verified all 12 hidden attributes now have `is_required = 0`
+- ✅ Cleared view and bootstrap cache
+
+**Database Query Used:**
+```sql
+UPDATE attributes 
+SET is_required = 0 
+WHERE code IN (
+  'tax_category_id', 'brand', 'meta_title', 'meta_keywords', 'meta_description',
+  'allow_rma', 'rma_rule_id', 'length', 'width', 'height', 'weight', 
+  'shipping', 'customer_group_prices', 'manage_stock'
+);
+```
+
+**Status:** ✅ FIXED - All hidden fields are now optional, products can be saved
 
 ---
 

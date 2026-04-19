@@ -360,7 +360,7 @@
                      * This will handle for customers.
                      */
                     if (this.isCustomer) {
-                        this.$axios.post('{{ route("shop.api.compare.store") }}', {
+                        this.$axios.post('/api/compare', {
                                 'product_id': productId
                             })
                             .then(response => {

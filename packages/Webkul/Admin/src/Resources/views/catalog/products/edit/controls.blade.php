@@ -10,6 +10,10 @@
         'length',
         'width',
         'height',
+        'weight',
+        'shipping',
+        'customer_group_prices',
+        'manage_stock',
     ];
 @endphp
 
