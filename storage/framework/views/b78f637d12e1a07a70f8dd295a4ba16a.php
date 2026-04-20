@@ -45,7 +45,7 @@ unset($__defined_vars, $__key, $__value); ?>
 >
 </v-quantity-changer>
 
-<?php if (! $__env->hasRenderedOnce('1464ee5c-30b3-4297-9a89-057e82aea2c6')): $__env->markAsRenderedOnce('1464ee5c-30b3-4297-9a89-057e82aea2c6');
+<?php if (! $__env->hasRenderedOnce('ed912116-b039-46ed-b9ce-c06545210d34')): $__env->markAsRenderedOnce('ed912116-b039-46ed-b9ce-c06545210d34');
 $__env->startPush('scripts'); ?>
     <script
         type="text/x-template"

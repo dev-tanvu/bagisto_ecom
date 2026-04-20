@@ -5,7 +5,7 @@ return [
         'code' => 'flatrate',
         'title' => 'Flat Rate',
         'description' => 'Flat Rate Shipping',
-        'active' => true,
+        'active' => false,
         'default_rate' => '10',
         'type' => 'per_unit',
         'class' => 'Webkul\Shipping\Carriers\FlatRate',
@@ -15,8 +15,16 @@ return [
         'code' => 'free',
         'title' => 'Free Shipping',
         'description' => 'Free Shipping',
-        'active' => true,
+        'active' => false,
         'default_rate' => '0',
         'class' => 'Webkul\Shipping\Carriers\Free',
+    ],
+
+    'customshipping' => [
+        'code' => 'customshipping',
+        'title' => 'Custom Shipping',
+        'description' => 'Custom Shipping Methods',
+        'active' => true,
+        'class' => 'Webkul\Shipping\Carriers\CustomShipping',
     ],
 ];

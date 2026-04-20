@@ -58,7 +58,7 @@
     </div>
 </div>
 
-<?php if (! $__env->hasRenderedOnce('a81195f1-830e-4c87-9eb7-5254a30508b9')): $__env->markAsRenderedOnce('a81195f1-830e-4c87-9eb7-5254a30508b9');
+<?php if (! $__env->hasRenderedOnce('7d4d167b-7bd7-44d0-9966-abb4d695ad83')): $__env->markAsRenderedOnce('7d4d167b-7bd7-44d0-9966-abb4d695ad83');
 $__env->startPush('scripts'); ?>
     <script type="text/x-template" id="v-mobile-drawer-template">
             <?php if (isset($component)) { $__componentOriginal2b3e2da8ab003ef79d854b1862e64fc8 = $component; } ?>
@@ -131,6 +131,22 @@ $__env->startPush('scripts'); ?>
 
                     <?php echo view_render_event('frooxi.shop.components.layouts.header.mobile.drawer.categories.after'); ?>
 
+
+                    <!-- Flash Sale Link -->
+                    <div class="border-t border-zinc-200">
+                        <a
+                            href="<?php echo e(route('shop.flash-sale.index')); ?>"
+                            class="flex items-center justify-between px-6 py-4 transition-colors duration-200 hover:bg-gray-50"
+                        >
+                            <div class="flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                </svg>
+                                <span class="text-base font-medium text-black">Flash Sale</span>
+                            </div>
+                            <span class="icon-arrow-right rtl:icon-arrow-left text-lg"></span>
+                        </a>
+                    </div>
                  <?php $__env->endSlot(); ?>
 
                  <?php $__env->slot('footer', null, []); ?> 

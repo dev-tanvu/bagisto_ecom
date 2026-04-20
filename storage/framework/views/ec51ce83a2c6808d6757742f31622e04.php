@@ -167,7 +167,7 @@
     </div>
 </div>
 
-<?php if (! $__env->hasRenderedOnce('f77d4ded-c7ad-42a5-ab3a-f42e7c14131c')): $__env->markAsRenderedOnce('f77d4ded-c7ad-42a5-ab3a-f42e7c14131c');
+<?php if (! $__env->hasRenderedOnce('39978a71-b466-4855-89bd-f3ad1ae14bab')): $__env->markAsRenderedOnce('39978a71-b466-4855-89bd-f3ad1ae14bab');
 $__env->startPush('styles'); ?>
     <style>
         #main-header-container {
@@ -273,7 +273,7 @@ $__env->startPush('styles'); ?>
     </style>
 <?php $__env->stopPush(); endif; ?>
 
-<?php if (! $__env->hasRenderedOnce('cbafefbf-2eb5-4a1a-b873-cb47006e5e82')): $__env->markAsRenderedOnce('cbafefbf-2eb5-4a1a-b873-cb47006e5e82');
+<?php if (! $__env->hasRenderedOnce('1b42d43b-d899-447c-b2b6-22d28794bf84')): $__env->markAsRenderedOnce('1b42d43b-d899-447c-b2b6-22d28794bf84');
 $__env->startPush('scripts'); ?>
     <!-- Desktop Category Component -->
     <script type="text/x-template" id="v-desktop-category-template">
@@ -284,6 +284,22 @@ $__env->startPush('scripts'); ?>
             @mouseleave="scheduleClose"
         >
             <div class="flex items-center justify-center gap-10">
+                <!-- Flash Sale Link -->
+                <div class="py-4">
+                    <a
+                        href="<?php echo e(route('shop.flash-sale.index')); ?>"
+                        class="nav-category-link relative inline-flex whitespace-nowrap pb-1 text-sm font-medium uppercase transition-all duration-200"
+                        style="color: <?php echo e(request()->routeIs('shop.home.index') ? '#ffffff' : '#1a1a1a'); ?> !important; letter-spacing: 0.16em; text-decoration: none;"
+                    >
+                        Flash Sale
+
+                        <span
+                            class="nav-category-link-indicator absolute inset-x-0 -bottom-1 h-0.5 rounded-full transition-opacity duration-200"
+                            style="<?php echo e(request()->routeIs('shop.flash-sale.index') ? 'opacity: 100;' : 'opacity: 0;'); ?>"
+                        ></span>
+                    </a>
+                </div>
+
                 <div
                     v-for="category in categories"
                     :key="category.id"

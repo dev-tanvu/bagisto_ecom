@@ -5,6 +5,7 @@ use Webkul\Admin\Http\Controllers\Api\CategoryController;
 use Webkul\Admin\Http\Controllers\Api\CMSController;
 use Webkul\Admin\Http\Controllers\Api\CustomerController;
 use Webkul\Admin\Http\Controllers\Api\DashboardController;
+use Webkul\Admin\Http\Controllers\Api\FlashSaleController;
 use Webkul\Admin\Http\Controllers\Api\MarketingController;
 use Webkul\Admin\Http\Controllers\Api\OrderController;
 use Webkul\Admin\Http\Controllers\Api\ProductController;
@@ -106,4 +107,14 @@ Route::group(['middleware' => ['api']], function () {
     Route::put('storefront/hero-carousel/{id}', [StorefrontController::class, 'updateHeroSlide']);
     Route::delete('storefront/hero-carousel/{id}', [StorefrontController::class, 'deleteHeroSlide']);
     Route::put('storefront/hero-carousel/{id}/toggle', [StorefrontController::class, 'toggleSlideStatus']);
+
+    /**
+     * Flash Sale routes.
+     */
+    Route::get('storefront/flash-sale', [FlashSaleController::class, 'index']);
+    Route::post('storefront/flash-sale', [FlashSaleController::class, 'store']);
+    Route::put('storefront/flash-sale/{id}', [FlashSaleController::class, 'update']);
+    Route::delete('storefront/flash-sale/{id}', [FlashSaleController::class, 'destroy']);
+    Route::put('storefront/flash-sale/{id}/toggle', [FlashSaleController::class, 'toggleStatus']);
+    Route::post('storefront/flash-sale/reorder', [FlashSaleController::class, 'massUpdate']);
 });

@@ -15,6 +15,7 @@ use Webkul\Admin\Http\Controllers\Settings\SettingsPageController;
 // use Webkul\Admin\Http\Controllers\Settings\Tax\TaxRateController;
 use Webkul\Admin\Http\Controllers\Settings\ThemeController;
 use Webkul\Admin\Http\Controllers\Settings\UserController;
+use Webkul\Admin\Http\Controllers\Settings\ShippingMethodController;
 
 /**
  * Settings routes.

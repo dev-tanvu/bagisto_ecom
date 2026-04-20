@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Webkul\Admin\Http\Controllers\Settings\ShippingMethodController;
+use Webkul\Admin\Http\Controllers\Storefront\FlashSaleController;
 use Webkul\Admin\Http\Controllers\Storefront\HeroCarouselController;
 
 /**
@@ -20,5 +22,33 @@ Route::prefix('storefront')->group(function () {
         Route::delete('destroy/{id}', 'destroy')->name('admin.storefront.hero_carousel.destroy');
 
         Route::post('mass-update', 'massUpdate')->name('admin.storefront.hero_carousel.mass_update');
+    });
+
+    /**
+     * Flash Sale routes.
+     */
+    Route::controller(FlashSaleController::class)->prefix('flash-sale')->group(function () {
+        Route::get('', 'index')->name('admin.storefront.flash_sale.index');
+
+        Route::post('store', 'store')->name('admin.storefront.flash_sale.store');
+
+        Route::put('update/{id}', 'update')->name('admin.storefront.flash_sale.update');
+
+        Route::delete('destroy/{id}', 'destroy')->name('admin.storefront.flash_sale.destroy');
+
+        Route::post('mass-update', 'massUpdate')->name('admin.storefront.flash_sale.mass_update');
+    });
+
+    /**
+     * Shipping Methods routes.
+     */
+    Route::controller(ShippingMethodController::class)->prefix('shipping-methods')->group(function () {
+        Route::get('', 'index')->name('admin.shipping_methods.index');
+
+        Route::post('store', 'store')->name('admin.shipping_methods.store');
+
+        Route::put('update/{id}', 'update')->name('admin.shipping_methods.update');
+
+        Route::delete('destroy/{id}', 'destroy')->name('admin.shipping_methods.delete');
     });
 });

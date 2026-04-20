@@ -16,6 +16,8 @@ class ShippingServiceProvider extends ServiceProvider
         include __DIR__.'/../Http/helpers.php';
 
         $this->registerConfig();
+        $this->registerViews();
+        $this->registerTranslations();
     }
 
     /**
@@ -27,6 +29,30 @@ class ShippingServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/carriers.php', 'carriers'
+        );
+    }
+
+    /**
+     * Register package views.
+     *
+     * @return void
+     */
+    protected function registerViews()
+    {
+        $this->loadViewsFrom(
+            dirname(__DIR__).'/Resources/views', 'shipping'
+        );
+    }
+
+    /**
+     * Register package translations.
+     *
+     * @return void
+     */
+    protected function registerTranslations()
+    {
+        $this->loadTranslationsFrom(
+            dirname(__DIR__).'/Resources/lang', 'shipping'
         );
     }
 }

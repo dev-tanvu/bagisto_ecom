@@ -10,6 +10,7 @@ use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Shop\Http\Requests\ContactRequest;
 use Webkul\Shop\Http\Resources\CategoryTreeResource;
 use Webkul\Shop\Mail\ContactUs;
+use Webkul\Shop\Repositories\FlashSaleItemRepository;
 use Webkul\Shop\Repositories\HeroSlideRepository;
 use Webkul\Theme\Repositories\ThemeCustomizationRepository;
 
@@ -28,7 +29,8 @@ class HomeController extends Controller
     public function __construct(
         protected ThemeCustomizationRepository $themeCustomizationRepository,
         protected CategoryRepository $categoryRepository,
-        protected HeroSlideRepository $heroSlideRepository
+        protected HeroSlideRepository $heroSlideRepository,
+        protected FlashSaleItemRepository $flashSaleItemRepository
     ) {}
 
     /**
@@ -116,7 +118,9 @@ class HomeController extends Controller
      */
     public function flashSale(): View
     {
-        return view('shop::home.flash-sale');
+        $flashSaleItems = $this->flashSaleItemRepository->getActiveItems()->load('product');
+
+        return view('shop::home.flash-sale', compact('flashSaleItems'));
     }
 
     /**

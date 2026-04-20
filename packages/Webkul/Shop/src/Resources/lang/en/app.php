@@ -1107,6 +1107,7 @@ return [
                 'state' => 'State',
                 'street-address' => 'Street Address',
                 'telephone' => 'Telephone',
+                'mobile-number' => 'Mobile Number',
                 'title' => 'Address',
                 'vat-id' => 'Vat ID',
             ],

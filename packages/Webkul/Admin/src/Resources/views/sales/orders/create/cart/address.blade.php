@@ -76,10 +76,6 @@
                                     >
                                         <p class="text-base text-gray-800 dark:text-white">
                                             @{{ address.first_name + ' ' + address.last_name }}
-
-                                            <template v-if="address.company_name">
-                                                (@{{ address.company_name }})
-                                            </template>
                                         </p>
 
                                         <p class="text-gray-600 dark:text-gray-300">
@@ -90,8 +86,7 @@
                                             @{{
                                                 [
                                                     address.address.join(', '),
-                                                    address.city,
-                                                    address.state
+                                                    address.city
                                                 ].filter(string => string !== '').join(', ')
                                             }}
                                         </p>
@@ -191,10 +186,6 @@
                                             >
                                                 <p class="text-base text-gray-800 dark:text-white">
                                                     @{{ address.first_name + ' ' + address.last_name }}
-
-                                                    <template v-if="address.company_name">
-                                                        (@{{ address.company_name }})
-                                                    </template>
                                                 </p>
 
                                                 <p class="text-gray-600 dark:text-gray-300">
@@ -205,8 +196,7 @@
                                                     @{{
                                                         [
                                                             address.address.join(', '),
-                                                            address.city,
-                                                            address.state
+                                                            address.city
                                                         ].filter(string => string !== '').join(', ')
                                                     }}
                                                 </p>

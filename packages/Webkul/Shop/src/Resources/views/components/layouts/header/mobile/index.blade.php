@@ -115,6 +115,22 @@
                     <v-mobile-category ref="mobileCategory"></v-mobile-category>
 
                     {!! view_render_event('frooxi.shop.components.layouts.header.mobile.drawer.categories.after') !!}
+
+                    <!-- Flash Sale Link -->
+                    <div class="border-t border-zinc-200">
+                        <a
+                            href="{{ route('shop.flash-sale.index') }}"
+                            class="flex items-center justify-between px-6 py-4 transition-colors duration-200 hover:bg-gray-50"
+                        >
+                            <div class="flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                </svg>
+                                <span class="text-base font-medium text-black">Flash Sale</span>
+                            </div>
+                            <span class="icon-arrow-right rtl:icon-arrow-left text-lg"></span>
+                        </a>
+                    </div>
                 </x-slot>
 
                 <x-slot:footer>

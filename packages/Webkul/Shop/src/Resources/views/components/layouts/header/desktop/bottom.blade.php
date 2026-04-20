@@ -247,6 +247,22 @@
             @mouseleave="scheduleClose"
         >
             <div class="flex items-center justify-center gap-10">
+                <!-- Flash Sale Link -->
+                <div class="py-4">
+                    <a
+                        href="{{ route('shop.flash-sale.index') }}"
+                        class="nav-category-link relative inline-flex whitespace-nowrap pb-1 text-sm font-medium uppercase transition-all duration-200"
+                        style="color: {{ request()->routeIs('shop.home.index') ? '#ffffff' : '#1a1a1a' }} !important; letter-spacing: 0.16em; text-decoration: none;"
+                    >
+                        Flash Sale
+
+                        <span
+                            class="nav-category-link-indicator absolute inset-x-0 -bottom-1 h-0.5 rounded-full transition-opacity duration-200"
+                            style="{{ request()->routeIs('shop.flash-sale.index') ? 'opacity: 100;' : 'opacity: 0;' }}"
+                        ></span>
+                    </a>
+                </div>
+
                 <div
                     v-for="category in categories"
                     :key="category.id"

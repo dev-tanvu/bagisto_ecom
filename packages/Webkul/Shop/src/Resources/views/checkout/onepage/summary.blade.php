@@ -129,32 +129,6 @@
 
         {!! view_render_event('frooxi.shop.checkout.onepage.summary.delivery_charges.after') !!}
 
-        {{-- Tax --}}
-        {!! view_render_event('frooxi.shop.checkout.onepage.summary.tax.before') !!}
-
-        <div style="display:flex;justify-content:space-between;" v-if="! cart.tax_total">
-            <p style="font-family:'Montserrat',sans-serif;font-size:13px;color:#6b7280;">@lang('shop::app.checkout.onepage.summary.tax')</p>
-            <p style="font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;color:#111;">@{{ cart.formatted_tax_total }}</p>
-        </div>
-
-        <div style="border-top:1px solid #f3f4f6;padding-top:10px;" v-else>
-            <div style="display:flex;justify-content:space-between;cursor:pointer;" @click="cart.show_taxes = ! cart.show_taxes">
-                <p style="font-family:'Montserrat',sans-serif;font-size:13px;color:#6b7280;">@lang('shop::app.checkout.onepage.summary.tax')</p>
-                <p style="display:flex;align-items:center;gap:4px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;color:#111;">
-                    @{{ cart.formatted_tax_total }}
-                    <span class="text-lg" :class="{'icon-arrow-up': cart.show_taxes, 'icon-arrow-down': ! cart.show_taxes}"></span>
-                </p>
-            </div>
-            <div v-show="cart.show_taxes" style="margin-top:8px;display:flex;flex-direction:column;gap:5px;">
-                <div style="display:flex;justify-content:space-between;" v-for="(amount, index) in cart.applied_taxes">
-                    <p style="font-family:'Montserrat',sans-serif;font-size:12px;color:#9ca3af;">@{{ index }}</p>
-                    <p style="font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:#374151;">@{{ amount }}</p>
-                </div>
-            </div>
-        </div>
-
-        {!! view_render_event('frooxi.shop.checkout.onepage.summary.tax.after') !!}
-
         {{-- Grand Total --}}
         <div style="border-top:1.5px solid #111;padding-top:16px;margin-top:4px;">
             {!! view_render_event('frooxi.shop.checkout.onepage.summary.grand_total.before') !!}

@@ -7,7 +7,7 @@
     </div>
 </v-checkout-login>
 
-<?php if (! $__env->hasRenderedOnce('8743a175-0d33-43f3-bac4-60430e53b5e2')): $__env->markAsRenderedOnce('8743a175-0d33-43f3-bac4-60430e53b5e2');
+<?php if (! $__env->hasRenderedOnce('c1ab0676-7631-499a-ad95-8862c51a7b4d')): $__env->markAsRenderedOnce('c1ab0676-7631-499a-ad95-8862c51a7b4d');
 $__env->startPush('scripts'); ?>
     <?php echo \Webkul\Customer\Facades\Captcha::renderJS(); ?>
 

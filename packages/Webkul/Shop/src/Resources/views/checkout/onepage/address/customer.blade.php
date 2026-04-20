@@ -79,10 +79,6 @@
                                     <div class="flex items-center justify-between">
                                         <p class="text-base font-medium text-black">
                                             @{{ address.first_name + ' ' + address.last_name }}
-
-                                            <template v-if="address.company_name">
-                                                (@{{ address.company_name }})
-                                            </template>
                                         </p>
                                     </div>
 
@@ -91,9 +87,7 @@
                                             @{{ address.address.join(', ') }},
                                         </template>
 
-                                        @{{ address.city }},
-                                        @{{ address.state }}, @{{ address.country }},
-                                        @{{ address.postcode }}
+                                        @{{ address.city }}
                                     </p>
                                 </label>
                             </div>
@@ -199,10 +193,6 @@
                                             <div class="flex items-center justify-between">
                                                 <p class="text-base font-medium text-black">
                                                     @{{ address.first_name + ' ' + address.last_name }}
-
-                                                    <template v-if="address.company_name">
-                                                        (@{{ address.company_name }})
-                                                    </template>
                                                 </p>
                                             </div>
 
@@ -211,9 +201,7 @@
                                                     @{{ address.address.join(', ') }},
                                                 </template>
 
-                                                @{{ address.city }},
-                                                @{{ address.state }}, @{{ address.country }},
-                                                @{{ address.postcode }}
+                                                @{{ address.city }}
                                             </p>
                                         </label>
                                     </div>

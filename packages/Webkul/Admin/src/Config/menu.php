@@ -89,6 +89,20 @@ return [
         'sort' => 1,
         'icon' => '',
     ],
+    [
+        'key' => 'storefront.flash_sale',
+        'name' => 'Flash Sale',
+        'route' => 'admin.storefront.flash_sale.index',
+        'sort' => 2,
+        'icon' => '',
+    ],
+    [
+        'key' => 'storefront.shipping_methods',
+        'name' => 'Shipping Methods',
+        'route' => 'admin.shipping_methods.index',
+        'sort' => 3,
+        'icon' => 'icon-shipping',
+    ],
 
     // Settings (unified — replaces old settings + configuration)
     [

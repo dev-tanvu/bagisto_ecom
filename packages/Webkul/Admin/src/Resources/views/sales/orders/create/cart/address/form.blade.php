@@ -12,41 +12,6 @@
                 />
             </x-admin::form.control-group>
 
-            <!-- Company Name -->
-            <x-admin::form.control-group>
-                <x-admin::form.control-group.label>
-                    @lang('admin::app.sales.orders.create.cart.address.company-name')
-                </x-admin::form.control-group.label>
-
-                <x-admin::form.control-group.control
-                    type="text"
-                    ::name="controlName + '.company_name'"
-                    ::value="address.company_name"
-                    :placeholder="trans('admin::app.sales.orders.create.cart.address.company-name')"
-                />
-            </x-admin::form.control-group>
-
-            {!! view_render_event('frooxi.admin.sales.order.create.cart.address.form.company_name.after') !!}
-
-            <!-- VatId Name -->
-            <x-admin::form.control-group>
-                <x-admin::form.control-group.label>
-                    @lang('admin::app.sales.orders.create.cart.address.vat-id')
-                </x-admin::form.control-group.label>
-
-                <x-admin::form.control-group.control
-                    type="text"
-                    ::name="controlName + '.vat_id'"
-                    ::value="address.vat_id"
-                    :label="trans('admin::app.sales.orders.create.cart.address.vat-id')"
-                    :placeholder="trans('admin::app.sales.orders.create.cart.address.vat-id')"
-                />
-
-                <x-admin::form.control-group.error ::name="controlName + '.vat_id'" />
-            </x-admin::form.control-group>
-
-            {!! view_render_event('frooxi.admin.sales.order.create.cart.address.form.vat_id.after') !!}
-
             <!-- First Name -->
             <x-admin::form.control-group>
                 <x-admin::form.control-group.label class="required !mt-0">
@@ -148,84 +113,6 @@
 
             {!! view_render_event('frooxi.admin.sales.order.create.cart.address.form.address.after') !!}
 
-            <!-- Country -->
-            <x-admin::form.control-group class="!mb-4">
-                <x-admin::form.control-group.label class="{{ core()->isCountryRequired() ? 'required' : '' }} !mt-0">
-                    @lang('admin::app.sales.orders.create.cart.address.country')
-                </x-admin::form.control-group.label>
-
-                <x-admin::form.control-group.control
-                    type="select"
-                    ::name="controlName + '.country'"
-                    ::value="address.country"
-                    v-model="selectedCountry"
-                    rules="{{ core()->isCountryRequired() ? 'required' : '' }}"
-                    :label="trans('admin::app.sales.orders.create.cart.address.country')"
-                    :placeholder="trans('admin::app.sales.orders.create.cart.address.country')"
-                >
-                    <option value="">
-                        @lang('admin::app.sales.orders.create.cart.address.select-country')
-                    </option>
-
-                    <option
-                        v-for="country in countries"
-                        :value="country.code"
-                    >
-                        @{{ country.name }}
-                    </option>
-                </x-admin::form.control-group.control>
-
-                <x-admin::form.control-group.error ::name="controlName + '.country'" />
-            </x-admin::form.control-group>
-
-            {!! view_render_event('frooxi.admin.sales.order.create.cart.address.form.country.after') !!}
-
-            <!-- State -->
-            <x-admin::form.control-group>
-                <x-admin::form.control-group.label class="{{ core()->isStateRequired() ? 'required' : '' }} !mt-0">
-                    @lang('admin::app.sales.orders.create.cart.address.state')
-                </x-admin::form.control-group.label>
-
-                <template v-if="states">
-                    <template v-if="haveStates">
-                        <x-admin::form.control-group.control
-                            type="select"
-                            ::name="controlName + '.state'"
-                            ::value="address.state"
-                            rules="{{ core()->isStateRequired() ? 'required' : '' }}"
-                            :label="trans('admin::app.sales.orders.create.cart.address.state')"
-                            :placeholder="trans('admin::app.sales.orders.create.cart.address.state')"
-                        >
-                            <option value="">
-                                @lang('admin::app.sales.orders.create.cart.address.select-state')
-                            </option>
-
-                            <option
-                                v-for='state in states[selectedCountry]'
-                                :value="state.code"
-                            >
-                                @{{ state.default_name }}
-                            </option>
-                        </x-admin::form.control-group.control>
-                    </template>
-
-                    <template v-else>
-                        <x-admin::form.control-group.control
-                            type="text"
-                            ::name="controlName + '.state'"
-                            ::value="address.state"
-                            rules="{{ core()->isStateRequired() ? 'required' : '' }}"
-                            :label="trans('admin::app.sales.orders.create.cart.address.state')"
-                            :placeholder="trans('admin::app.sales.orders.create.cart.address.state')"
-                        />
-                    </template>
-                </template>
-
-                <x-admin::form.control-group.error ::name="controlName + '.state'" />
-            </x-admin::form.control-group>
-
-            {!! view_render_event('frooxi.admin.sales.order.create.cart.address.form.state.after') !!}
-
             <!-- City -->
             <x-admin::form.control-group>
                 <x-admin::form.control-group.label class="required !mt-0">
@@ -246,39 +133,19 @@
 
             {!! view_render_event('frooxi.admin.sales.order.create.cart.address.form.city.after') !!}
 
-            <!-- Postcode -->
-            <x-admin::form.control-group>
-                <x-admin::form.control-group.label class="{{ core()->isPostCodeRequired() ? 'required' : '' }} !mt-0">
-                    @lang('admin::app.sales.orders.create.cart.address.postcode')
-                </x-admin::form.control-group.label>
-
-                <x-admin::form.control-group.control
-                    type="text"
-                    ::name="controlName + '.postcode'"
-                    ::value="address.postcode"
-                    rules="{{ core()->isPostCodeRequired() ? 'required' : '' }}|postcode"
-                    :label="trans('admin::app.sales.orders.create.cart.address.postcode')"
-                    :placeholder="trans('admin::app.sales.orders.create.cart.address.postcode')"
-                />
-
-                <x-admin::form.control-group.error ::name="controlName + '.postcode'" />
-            </x-admin::form.control-group>
-
-            {!! view_render_event('frooxi.admin.sales.order.create.cart.address.form.postcode.after') !!}
-
-            <!-- Phone Number -->
+            <!-- Mobile Number -->
             <x-admin::form.control-group>
                 <x-admin::form.control-group.label class="required !mt-0">
-                    @lang('admin::app.sales.orders.create.cart.address.telephone')
+                    @lang('admin::app.sales.orders.create.cart.address.mobile-number')
                 </x-admin::form.control-group.label>
 
                 <x-admin::form.control-group.control
                     type="text"
                     ::name="controlName + '.phone'"
                     ::value="address.phone"
-                    rules="required|numeric"
-                    :label="trans('admin::app.sales.orders.create.cart.address.telephone')"
-                    :placeholder="trans('admin::app.sales.orders.create.cart.address.telephone')"
+                    rules="required|phone"
+                    :label="trans('admin::app.sales.orders.create.cart.address.mobile-number')"
+                    :placeholder="trans('admin::app.sales.orders.create.cart.address.mobile-number')"
                 />
 
                 <x-admin::form.control-group.error ::name="controlName + '.phone'" />
@@ -303,15 +170,11 @@
 
                     default: () => ({
                         id: 0,
-                        company_name: '',
                         first_name: '',
                         last_name: '',
                         email: '',
                         address: [],
-                        country: '',
-                        state: '',
                         city: '',
-                        postcode: '',
                         phone: '',
                     }),
                 },
@@ -327,34 +190,12 @@
                 }
             },
 
-            created() {
-                this.getCountries();
-
-                this.getStates();
-            },
-
-            computed: {
-                haveStates() {
-                    return !! this.states[this.selectedCountry]?.length;
-                },
+            mounted() {
+                // Removed country and state loading
             },
 
             methods: {
-                getCountries() {
-                    this.$axios.get("{{ route('shop.api.core.countries') }}")
-                        .then(response => {
-                            this.countries = response.data.data;
-                        })
-                        .catch(() => {});
-                },
-
-                getStates() {
-                    this.$axios.get("{{ route('shop.api.core.states') }}")
-                        .then(response => {
-                            this.states = response.data.data;
-                        })
-                        .catch(() => {});
-                },
+                // Methods removed as fields are not needed
             }
         });
     </script>

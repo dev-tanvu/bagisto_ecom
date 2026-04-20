@@ -675,6 +675,26 @@ return [
         'name' => 'admin::app.acl.delete',
         'route' => 'admin.storefront.hero_carousel.destroy',
         'sort' => 3,
+    ], [
+        'key' => 'storefront.flash_sale',
+        'name' => 'Flash Sale',
+        'route' => 'admin.storefront.flash_sale.index',
+        'sort' => 2,
+    ], [
+        'key' => 'storefront.flash_sale.create',
+        'name' => 'admin::app.acl.create',
+        'route' => 'admin.storefront.flash_sale.store',
+        'sort' => 1,
+    ], [
+        'key' => 'storefront.flash_sale.edit',
+        'name' => 'admin::app.acl.edit',
+        'route' => 'admin.storefront.flash_sale.update',
+        'sort' => 2,
+    ], [
+        'key' => 'storefront.flash_sale.delete',
+        'name' => 'admin::app.acl.delete',
+        'route' => 'admin.storefront.flash_sale.destroy',
+        'sort' => 3,
     ],
 
     /*

@@ -2,6 +2,7 @@
 
 namespace Webkul\Shipping;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Webkul\Checkout\Facades\Cart;
 
@@ -30,7 +31,7 @@ class Shipping
         $ratesList = [];
 
         foreach (Config::get('carriers') as $shippingMethod) {
-            $object = new $shippingMethod['class'];
+            $object = App::make($shippingMethod['class']);
 
             if ($rates = $object->calculate()) {
                 if (is_array($rates)) {
@@ -128,7 +129,7 @@ class Shipping
         $methods = [];
 
         foreach (Config::get('carriers') as $shippingMethod) {
-            $object = new $shippingMethod['class'];
+            $object = App::make($shippingMethod['class']);
 
             if (! $object->isAvailable()) {
                 continue;
