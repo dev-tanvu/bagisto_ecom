@@ -379,34 +379,6 @@
                                         </div>
                                     </template>
 
-                                    <template v-if="selectedType == 'editWeight'">
-                                        <div class="border-b pb-2.5 dark:border-gray-800">
-                                            <div class="flex items-end gap-2.5">
-                                                <x-admin::form.control-group class="!mb-0 flex-1">
-                                                    <x-admin::form.control-group.label>
-                                                        @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-weight')
-                                                    </x-admin::form.control-group.label>
-                        
-                                                    <div class="relative">
-                                                        <x-admin::form.control-group.control
-                                                            type="text"
-                                                            name="weight"
-                                                            ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
-                                                            value="0"
-                                                            :label="trans('admin::app.catalog.products.edit.types.configurable.mass-edit.weight')"
-                                                        />
-                                                    </div>
-                                                </x-admin::form.control-group>
-
-                                                <button class="secondary-button">
-                                                    @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
-                                                </button>
-                                            </div>
-                    
-                                            <x-admin::form.control-group.error control-name="weight" />
-                                        </div>
-                                    </template>
-
                                     <template v-if="selectedType == 'editName'">
                                         <div class="border-b pb-2.5 dark:border-gray-800">
                                             <div class="flex items-end gap-2.5">
@@ -476,7 +448,7 @@
                                 :class="{'grid grid-cols-2 items-center justify-between gap-3': [
                                         'editName', 'editSku',
                                 ].includes(selectedType), 'flex items-center justify-between' : [
-                                    'editWeight', 'editPrices', 'editStatus',
+                                    'editPrices', 'editStatus',
                                 ].includes(selectedType)}"
                                 v-for="variant in tempSelectedVariants"
                             >
@@ -509,32 +481,6 @@
                                                 :rules="{required: true, decimal: true, min_value: 0}"
                                                 v-model="variant.price"
                                                 label="@lang('admin::app.catalog.products.edit.types.configurable.mass-edit.price')"
-                                            >
-                                            </v-field>
-                                        </div>
-
-                                        <v-error-message
-                                            :name="'variants[variant_' + variant.id + ']'"
-                                            v-slot="{ message }"
-                                        >
-                                            <p class="mt-1 text-xs italic text-red-600">
-                                                @{{ message }}
-                                            </p>
-                                        </v-error-message>
-                                    </x-admin::form.control-group>
-                                </template>
-
-                                <template v-if="selectedType == 'editWeight'">
-                                    <x-admin::form.control-group class="mb-0 max-w-[115px] flex-1">
-                                        <div class="relative">
-                                            <v-field
-                                                type="text"
-                                                class="flex min-h-[39px] w-full rounded-md border bg-white py-1.5 text-sm font-normal text-gray-600 transition-all hover:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 ltr:pl-2.5 rtl:pr-2.5"
-                                                :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
-                                                :name="'variants[variant_' + variant.id + ']'"
-                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
-                                                v-model="variant.weight"
-                                                label="@lang('admin::app.catalog.products.edit.types.configurable.mass-edit.weight')"
                                             >
                                             </v-field>
                                         </div>
@@ -726,12 +672,6 @@
                     type="hidden"
                     :name="'variants[' + variant.id + '][price]'"
                     :value="variant.price"
-                />
-
-                <input
-                    type="hidden"
-                    :name="'variants[' + variant.id + '][weight]'"
-                    :value="variant.weight"
                 />
 
                 <input
@@ -994,22 +934,6 @@
                                             </x-admin::form.control-group>
                                         </div>
 
-                                        <x-admin::form.control-group>
-                                            <x-admin::form.control-group.label class="required">
-                                                @lang('admin::app.catalog.products.edit.types.configurable.edit.weight')
-                                            </x-admin::form.control-group.label>
-                
-                                            <x-admin::form.control-group.control
-                                                type="text"
-                                                name="weight"
-                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
-                                                ::value="variant.weight"
-                                                :label="trans('admin::app.catalog.products.edit.types.configurable.edit.weight')"
-                                            />
-                
-                                            <x-admin::form.control-group.error control-name="weight" />
-                                        </x-admin::form.control-group>
-
                                         <!-- Inventories -->
                                         <div class="mt-5 grid">
                                             <p class="mb-2.5 font-semibold text-gray-800 dark:text-white">
@@ -1200,12 +1124,6 @@
                             title: "@lang('admin::app.catalog.products.edit.types.configurable.mass-edit.edit-inventories')"
                         },
 
-                        editWeight: {
-                            key: 'editWeight',
-                            value: 'weight',
-                            title: "@lang('admin::app.catalog.products.edit.types.configurable.mass-edit.edit-weight')",
-                        },
-
                         editStatus: {
                             key: 'editStatus',
                             value: 'status',
@@ -1390,15 +1308,6 @@
                             id: variant.id,
                             name: 'inventories'
                         })
-                    });
-                },
-
-                editWeight(params) {
-                    this.selectedVariants.forEach((variant) => {
-                        variant.weight = this.findVariantByAttribute({
-                            id: variant.id,
-                            name: 'weight'
-                        });
                     });
                 },
 

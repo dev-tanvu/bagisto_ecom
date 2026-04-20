@@ -10,7 +10,7 @@
 <?php echo view_render_event('frooxi.admin.catalog.product.edit.form.types.configurable.after', ['product' => $product]); ?>
 
 
-<?php if (! $__env->hasRenderedOnce('3743684c-21b9-48c6-aa75-47b09b803dd1')): $__env->markAsRenderedOnce('3743684c-21b9-48c6-aa75-47b09b803dd1');
+<?php if (! $__env->hasRenderedOnce('20e714ca-f34a-42a0-becd-4947912b5799')): $__env->markAsRenderedOnce('20e714ca-f34a-42a0-becd-4947912b5799');
 $__env->startPush('scripts'); ?>
     <!-- Variations Template -->
     <script
@@ -635,102 +635,6 @@ $__env->startPush('scripts'); ?>
                                         </div>
                                     </template>
 
-                                    <template v-if="selectedType == 'editWeight'">
-                                        <div class="border-b pb-2.5 dark:border-gray-800">
-                                            <div class="flex items-end gap-2.5">
-                                                <?php if (isset($component)) { $__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'admin::components.form.control-group.index','data' => ['class' => '!mb-0 flex-1']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('admin::form.control-group'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['class' => '!mb-0 flex-1']); ?>
-                                                    <?php if (isset($component)) { $__componentOriginal8378211f70f8c39b16d47cecdac9c7c8 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal8378211f70f8c39b16d47cecdac9c7c8 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'admin::components.form.control-group.label','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('admin::form.control-group.label'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes([]); ?>
-                                                        <?php echo app('translator')->get('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-weight'); ?>
-                                                     <?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal8378211f70f8c39b16d47cecdac9c7c8)): ?>
-<?php $attributes = $__attributesOriginal8378211f70f8c39b16d47cecdac9c7c8; ?>
-<?php unset($__attributesOriginal8378211f70f8c39b16d47cecdac9c7c8); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal8378211f70f8c39b16d47cecdac9c7c8)): ?>
-<?php $component = $__componentOriginal8378211f70f8c39b16d47cecdac9c7c8; ?>
-<?php unset($__componentOriginal8378211f70f8c39b16d47cecdac9c7c8); ?>
-<?php endif; ?>
-                        
-                                                    <div class="relative">
-                                                        <?php if (isset($component)) { $__componentOriginal53af403f6b2179a3039d488b8ab2a267 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal53af403f6b2179a3039d488b8ab2a267 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'admin::components.form.control-group.control','data' => ['type' => 'text','name' => 'weight',':rules' => '{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }','value' => '0','label' => trans('admin::app.catalog.products.edit.types.configurable.mass-edit.weight')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('admin::form.control-group.control'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['type' => 'text','name' => 'weight',':rules' => '{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }','value' => '0','label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(trans('admin::app.catalog.products.edit.types.configurable.mass-edit.weight'))]); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal53af403f6b2179a3039d488b8ab2a267)): ?>
-<?php $attributes = $__attributesOriginal53af403f6b2179a3039d488b8ab2a267; ?>
-<?php unset($__attributesOriginal53af403f6b2179a3039d488b8ab2a267); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal53af403f6b2179a3039d488b8ab2a267)): ?>
-<?php $component = $__componentOriginal53af403f6b2179a3039d488b8ab2a267; ?>
-<?php unset($__componentOriginal53af403f6b2179a3039d488b8ab2a267); ?>
-<?php endif; ?>
-                                                    </div>
-                                                 <?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3)): ?>
-<?php $attributes = $__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3; ?>
-<?php unset($__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3)): ?>
-<?php $component = $__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3; ?>
-<?php unset($__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3); ?>
-<?php endif; ?>
-
-                                                <button class="secondary-button">
-                                                    <?php echo app('translator')->get('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn'); ?>
-                                                </button>
-                                            </div>
-                    
-                                            <?php if (isset($component)) { $__componentOriginal8da25fb6534e2ef288914e35c32417f8 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal8da25fb6534e2ef288914e35c32417f8 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'admin::components.form.control-group.error','data' => ['controlName' => 'weight']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('admin::form.control-group.error'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['control-name' => 'weight']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal8da25fb6534e2ef288914e35c32417f8)): ?>
-<?php $attributes = $__attributesOriginal8da25fb6534e2ef288914e35c32417f8; ?>
-<?php unset($__attributesOriginal8da25fb6534e2ef288914e35c32417f8); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal8da25fb6534e2ef288914e35c32417f8)): ?>
-<?php $component = $__componentOriginal8da25fb6534e2ef288914e35c32417f8; ?>
-<?php unset($__componentOriginal8da25fb6534e2ef288914e35c32417f8); ?>
-<?php endif; ?>
-                                        </div>
-                                    </template>
-
                                     <template v-if="selectedType == 'editName'">
                                         <div class="border-b pb-2.5 dark:border-gray-800">
                                             <div class="flex items-end gap-2.5">
@@ -946,7 +850,7 @@ $__env->startPush('scripts'); ?>
                                 :class="{'grid grid-cols-2 items-center justify-between gap-3': [
                                         'editName', 'editSku',
                                 ].includes(selectedType), 'flex items-center justify-between' : [
-                                    'editWeight', 'editPrices', 'editStatus',
+                                    'editPrices', 'editStatus',
                                 ].includes(selectedType)}"
                                 v-for="variant in tempSelectedVariants"
                             >
@@ -1007,50 +911,6 @@ $__env->startPush('scripts'); ?>
                                                 :rules="{required: true, decimal: true, min_value: 0}"
                                                 v-model="variant.price"
                                                 label="<?php echo app('translator')->get('admin::app.catalog.products.edit.types.configurable.mass-edit.price'); ?>"
-                                            >
-                                            </v-field>
-                                        </div>
-
-                                        <v-error-message
-                                            :name="'variants[variant_' + variant.id + ']'"
-                                            v-slot="{ message }"
-                                        >
-                                            <p class="mt-1 text-xs italic text-red-600">
-                                                {{ message }}
-                                            </p>
-                                        </v-error-message>
-                                     <?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3)): ?>
-<?php $attributes = $__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3; ?>
-<?php unset($__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3)): ?>
-<?php $component = $__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3; ?>
-<?php unset($__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3); ?>
-<?php endif; ?>
-                                </template>
-
-                                <template v-if="selectedType == 'editWeight'">
-                                    <?php if (isset($component)) { $__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'admin::components.form.control-group.index','data' => ['class' => 'mb-0 max-w-[115px] flex-1']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('admin::form.control-group'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['class' => 'mb-0 max-w-[115px] flex-1']); ?>
-                                        <div class="relative">
-                                            <v-field
-                                                type="text"
-                                                class="flex min-h-[39px] w-full rounded-md border bg-white py-1.5 text-sm font-normal text-gray-600 transition-all hover:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 ltr:pl-2.5 rtl:pr-2.5"
-                                                :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
-                                                :name="'variants[variant_' + variant.id + ']'"
-                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
-                                                v-model="variant.weight"
-                                                label="<?php echo app('translator')->get('admin::app.catalog.products.edit.types.configurable.mass-edit.weight'); ?>"
                                             >
                                             </v-field>
                                         </div>
@@ -1374,12 +1234,6 @@ $__env->startPush('scripts'); ?>
                     type="hidden"
                     :name="'variants[' + variant.id + '][price]'"
                     :value="variant.price"
-                />
-
-                <input
-                    type="hidden"
-                    :name="'variants[' + variant.id + '][weight]'"
-                    :value="variant.weight"
                 />
 
                 <input
@@ -1940,90 +1794,6 @@ $__env->startPush('scripts'); ?>
 <?php endif; ?>
                                         </div>
 
-                                        <?php if (isset($component)) { $__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'admin::components.form.control-group.index','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('admin::form.control-group'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes([]); ?>
-                                            <?php if (isset($component)) { $__componentOriginal8378211f70f8c39b16d47cecdac9c7c8 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal8378211f70f8c39b16d47cecdac9c7c8 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'admin::components.form.control-group.label','data' => ['class' => 'required']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('admin::form.control-group.label'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['class' => 'required']); ?>
-                                                <?php echo app('translator')->get('admin::app.catalog.products.edit.types.configurable.edit.weight'); ?>
-                                             <?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal8378211f70f8c39b16d47cecdac9c7c8)): ?>
-<?php $attributes = $__attributesOriginal8378211f70f8c39b16d47cecdac9c7c8; ?>
-<?php unset($__attributesOriginal8378211f70f8c39b16d47cecdac9c7c8); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal8378211f70f8c39b16d47cecdac9c7c8)): ?>
-<?php $component = $__componentOriginal8378211f70f8c39b16d47cecdac9c7c8; ?>
-<?php unset($__componentOriginal8378211f70f8c39b16d47cecdac9c7c8); ?>
-<?php endif; ?>
-                
-                                            <?php if (isset($component)) { $__componentOriginal53af403f6b2179a3039d488b8ab2a267 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal53af403f6b2179a3039d488b8ab2a267 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'admin::components.form.control-group.control','data' => ['type' => 'text','name' => 'weight',':rules' => '{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }',':value' => 'variant.weight','label' => trans('admin::app.catalog.products.edit.types.configurable.edit.weight')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('admin::form.control-group.control'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['type' => 'text','name' => 'weight',':rules' => '{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }',':value' => 'variant.weight','label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(trans('admin::app.catalog.products.edit.types.configurable.edit.weight'))]); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal53af403f6b2179a3039d488b8ab2a267)): ?>
-<?php $attributes = $__attributesOriginal53af403f6b2179a3039d488b8ab2a267; ?>
-<?php unset($__attributesOriginal53af403f6b2179a3039d488b8ab2a267); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal53af403f6b2179a3039d488b8ab2a267)): ?>
-<?php $component = $__componentOriginal53af403f6b2179a3039d488b8ab2a267; ?>
-<?php unset($__componentOriginal53af403f6b2179a3039d488b8ab2a267); ?>
-<?php endif; ?>
-                
-                                            <?php if (isset($component)) { $__componentOriginal8da25fb6534e2ef288914e35c32417f8 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal8da25fb6534e2ef288914e35c32417f8 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'admin::components.form.control-group.error','data' => ['controlName' => 'weight']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('admin::form.control-group.error'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['control-name' => 'weight']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal8da25fb6534e2ef288914e35c32417f8)): ?>
-<?php $attributes = $__attributesOriginal8da25fb6534e2ef288914e35c32417f8; ?>
-<?php unset($__attributesOriginal8da25fb6534e2ef288914e35c32417f8); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal8da25fb6534e2ef288914e35c32417f8)): ?>
-<?php $component = $__componentOriginal8da25fb6534e2ef288914e35c32417f8; ?>
-<?php unset($__componentOriginal8da25fb6534e2ef288914e35c32417f8); ?>
-<?php endif; ?>
-                                         <?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3)): ?>
-<?php $attributes = $__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3; ?>
-<?php unset($__attributesOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3)): ?>
-<?php $component = $__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3; ?>
-<?php unset($__componentOriginal7b1bc76a00ab5e7f1bf2c6429dae85a3); ?>
-<?php endif; ?>
-
                                         <!-- Inventories -->
                                         <div class="mt-5 grid">
                                             <p class="mb-2.5 font-semibold text-gray-800 dark:text-white">
@@ -2265,12 +2035,6 @@ $__env->startPush('scripts'); ?>
                             title: "<?php echo app('translator')->get('admin::app.catalog.products.edit.types.configurable.mass-edit.edit-inventories'); ?>"
                         },
 
-                        editWeight: {
-                            key: 'editWeight',
-                            value: 'weight',
-                            title: "<?php echo app('translator')->get('admin::app.catalog.products.edit.types.configurable.mass-edit.edit-weight'); ?>",
-                        },
-
                         editStatus: {
                             key: 'editStatus',
                             value: 'status',
@@ -2455,15 +2219,6 @@ $__env->startPush('scripts'); ?>
                             id: variant.id,
                             name: 'inventories'
                         })
-                    });
-                },
-
-                editWeight(params) {
-                    this.selectedVariants.forEach((variant) => {
-                        variant.weight = this.findVariantByAttribute({
-                            id: variant.id,
-                            name: 'weight'
-                        });
                     });
                 },
 

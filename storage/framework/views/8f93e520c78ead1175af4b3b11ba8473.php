@@ -12,7 +12,7 @@
     <?php echo view_render_event('frooxi.shop.products.view.booking.before', ['product' => $product]); ?>
 
 
-    <?php if (! $__env->hasRenderedOnce('7e18a198-643c-46f8-9b70-17a2e914fed5')): $__env->markAsRenderedOnce('7e18a198-643c-46f8-9b70-17a2e914fed5');
+    <?php if (! $__env->hasRenderedOnce('132280cf-17ad-48f4-bb94-866e775252f3')): $__env->markAsRenderedOnce('132280cf-17ad-48f4-bb94-866e775252f3');
 $__env->startPush('scripts'); ?>
         <script
             type="text/x-template"

@@ -46,7 +46,7 @@
 <?php echo view_render_event('frooxi.admin.catalog.product.edit.form.categories.after', ['product' => $product]); ?>
 
 
-<?php if (! $__env->hasRenderedOnce('cbbacf02-7577-4e59-92a5-b99241ddbdd0')): $__env->markAsRenderedOnce('cbbacf02-7577-4e59-92a5-b99241ddbdd0');
+<?php if (! $__env->hasRenderedOnce('52f2c3eb-59ef-4dde-abc4-8453b8ebc14c')): $__env->markAsRenderedOnce('52f2c3eb-59ef-4dde-abc4-8453b8ebc14c');
 $__env->startPush('scripts'); ?>
     <script
         type="text/x-template"

@@ -21,7 +21,7 @@
 <?php endif; ?>
 </v-product-gallery>
 
-<?php if (! $__env->hasRenderedOnce('c2d36627-3122-4ddc-9ae9-a225f5c307a2')): $__env->markAsRenderedOnce('c2d36627-3122-4ddc-9ae9-a225f5c307a2');
+<?php if (! $__env->hasRenderedOnce('9c88de1a-425c-4ae2-a218-8c0381bd1482')): $__env->markAsRenderedOnce('9c88de1a-425c-4ae2-a218-8c0381bd1482');
 $__env->startPush('styles'); ?>
     <style>
         @media (max-width: 1179px) {
@@ -33,7 +33,7 @@ $__env->startPush('styles'); ?>
     </style>
 <?php $__env->stopPush(); endif; ?>
 
-<?php if (! $__env->hasRenderedOnce('6dfb26ec-c607-4c6f-801f-1e09f0bc286f')): $__env->markAsRenderedOnce('6dfb26ec-c607-4c6f-801f-1e09f0bc286f');
+<?php if (! $__env->hasRenderedOnce('e9a7a640-a5a6-4272-ac36-585eaff21eac')): $__env->markAsRenderedOnce('e9a7a640-a5a6-4272-ac36-585eaff21eac');
 $__env->startPush('scripts'); ?>
     <script
         type="text/x-template"

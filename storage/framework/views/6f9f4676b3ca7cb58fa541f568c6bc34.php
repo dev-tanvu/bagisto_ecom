@@ -41,7 +41,7 @@
 <?php echo view_render_event('frooxi.shop.products.view.reviews.after', ['product' => $product]); ?>
 
 
-<?php if (! $__env->hasRenderedOnce('012885be-4298-4446-ac0a-680474c76f9c')): $__env->markAsRenderedOnce('012885be-4298-4446-ac0a-680474c76f9c');
+<?php if (! $__env->hasRenderedOnce('2b03bdfe-de94-4085-a4cd-e55798810d22')): $__env->markAsRenderedOnce('2b03bdfe-de94-4085-a4cd-e55798810d22');
 $__env->startPush('scripts'); ?>
     <!-- Product Review Template -->
     <script

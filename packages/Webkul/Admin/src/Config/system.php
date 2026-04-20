@@ -2654,7 +2654,7 @@ return [
                 'title' => 'admin::app.configuration.index.sales.checkout.shopping-cart.guest-checkout',
                 'info' => 'admin::app.configuration.index.sales.checkout.shopping-cart.guest-checkout-info',
                 'type' => 'boolean',
-                'default' => 1,
+                'default' => 0,
             ], [
                 'name' => 'cart_page',
                 'title' => 'admin::app.configuration.index.sales.checkout.shopping-cart.cart-page',

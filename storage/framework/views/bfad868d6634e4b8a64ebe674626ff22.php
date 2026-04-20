@@ -7,7 +7,7 @@
     <?php echo view_render_event('frooxi.shop.products.view.bundle-options.after', ['product' => $product]); ?>
 
 
-    <?php if (! $__env->hasRenderedOnce('c67ec0e3-01da-414d-be59-619da980e76e')): $__env->markAsRenderedOnce('c67ec0e3-01da-414d-be59-619da980e76e');
+    <?php if (! $__env->hasRenderedOnce('1e00a242-0aa6-4d24-80fd-444430859fba')): $__env->markAsRenderedOnce('1e00a242-0aa6-4d24-80fd-444430859fba');
 $__env->startPush('scripts'); ?>
         <script
             type="text/x-template"

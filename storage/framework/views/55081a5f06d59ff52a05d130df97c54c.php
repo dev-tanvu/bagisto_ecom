@@ -105,7 +105,7 @@
 
     </div>
 
-    <?php if (! $__env->hasRenderedOnce('d6ab0e37-2281-4d49-9cf5-3f3b97f9a387')): $__env->markAsRenderedOnce('d6ab0e37-2281-4d49-9cf5-3f3b97f9a387');
+    <?php if (! $__env->hasRenderedOnce('031d4f4c-7730-4dd5-8a49-a29aaddbb0da')): $__env->markAsRenderedOnce('031d4f4c-7730-4dd5-8a49-a29aaddbb0da');
 $__env->startPush('scripts'); ?>
         <script src="<?php echo e(frooxi_asset('js/chart.js')); ?>"></script>
 
