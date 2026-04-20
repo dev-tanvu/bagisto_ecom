@@ -57,13 +57,6 @@ return [
         'sort' => 1,
         'icon' => '',
     ],
-    [
-        'key' => 'sales.invoices',
-        'name' => 'admin::app.components.layouts.sidebar.invoices',
-        'route' => 'admin.sales.invoices.index',
-        'sort' => 2,
-        'icon' => '',
-    ],
 
     // Customers (direct link, no sub-items)
     [

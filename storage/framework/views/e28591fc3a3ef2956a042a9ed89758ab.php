@@ -9,7 +9,7 @@
 
 </v-datagrid-pagination>
 
-<?php if (! $__env->hasRenderedOnce('2f2dbf83-ac55-4ffc-9c8d-0152a72bf6c3')): $__env->markAsRenderedOnce('2f2dbf83-ac55-4ffc-9c8d-0152a72bf6c3');
+<?php if (! $__env->hasRenderedOnce('47f44e96-9bf6-49c5-b3b0-aa5b665d44ed')): $__env->markAsRenderedOnce('47f44e96-9bf6-49c5-b3b0-aa5b665d44ed');
 $__env->startPush('scripts'); ?>
     <script
         type="text/x-template"

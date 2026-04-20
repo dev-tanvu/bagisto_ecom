@@ -172,6 +172,7 @@ return [
 
     'sales' => [
         'orders' => [
+            'update-status-success' => 'Order status updated successfully.',
             'index' => [
                 'create-btn' => 'Create Order',
                 'title' => 'Orders',
@@ -203,6 +204,7 @@ return [
                     'pending' => 'Pending',
                     'pending-payment' => 'Pending Payment',
                     'processing' => 'Processing',
+                    'shipped' => 'Shipped',
                     'product-count' => ':count + More Products',
                     'status' => 'Status',
                     'success' => 'Success',

@@ -33,7 +33,7 @@ unset($__defined_vars, $__key, $__value); ?>
 
 </v-datagrid>
 
-<?php if (! $__env->hasRenderedOnce('3f46dd16-20a8-4f4d-961d-9b98605928d6')): $__env->markAsRenderedOnce('3f46dd16-20a8-4f4d-961d-9b98605928d6');
+<?php if (! $__env->hasRenderedOnce('8aac260e-5681-4b33-8f96-2f496eb6eba9')): $__env->markAsRenderedOnce('8aac260e-5681-4b33-8f96-2f496eb6eba9');
 $__env->startPush('scripts'); ?>
     <script
         type="text/x-template"

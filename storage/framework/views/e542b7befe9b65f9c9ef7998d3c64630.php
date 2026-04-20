@@ -23,7 +23,7 @@
 <?php endif; ?>
 </v-dashboard-overall-details>
 
-<?php if (! $__env->hasRenderedOnce('20753373-6345-4493-a984-088e8b088fb2')): $__env->markAsRenderedOnce('20753373-6345-4493-a984-088e8b088fb2');
+<?php if (! $__env->hasRenderedOnce('05abebf2-a923-4514-bce5-0bf98c00c0b9')): $__env->markAsRenderedOnce('05abebf2-a923-4514-bce5-0bf98c00c0b9');
 $__env->startPush('scripts'); ?>
     <script
         type="text/x-template"

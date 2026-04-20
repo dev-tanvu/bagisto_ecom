@@ -75,8 +75,16 @@ class OrderDataGrid extends DataGrid
             'filterable_type' => 'dropdown',
             'filterable_options' => [
                 [
+                    'label' => trans('admin::app.sales.orders.index.datagrid.pending'),
+                    'value' => Order::STATUS_PENDING,
+                ],
+                [
                     'label' => trans('admin::app.sales.orders.index.datagrid.processing'),
                     'value' => Order::STATUS_PROCESSING,
+                ],
+                [
+                    'label' => trans('admin::app.sales.orders.index.datagrid.shipped'),
+                    'value' => Order::STATUS_SHIPPED,
                 ],
                 [
                     'label' => trans('admin::app.sales.orders.index.datagrid.completed'),
@@ -86,28 +94,25 @@ class OrderDataGrid extends DataGrid
                     'label' => trans('admin::app.sales.orders.index.datagrid.canceled'),
                     'value' => Order::STATUS_CANCELED,
                 ],
-                [
-                    'label' => trans('admin::app.sales.orders.index.datagrid.closed'),
-                    'value' => Order::STATUS_CLOSED,
-                ],
-                [
-                    'label' => trans('admin::app.sales.orders.index.datagrid.pending'),
-                    'value' => Order::STATUS_PENDING,
-                ],
-                [
-                    'label' => trans('admin::app.sales.orders.index.datagrid.pending-payment'),
-                    'value' => Order::STATUS_PENDING_PAYMENT,
-                ],
-                [
-                    'label' => trans('admin::app.sales.orders.index.datagrid.fraud'),
-                    'value' => Order::STATUS_FRAUD,
-                ],
             ],
             'sortable' => true,
+            'closure' => function ($row) {
+                return $row->status;
+            },
+        ]);
+
+        $this->addColumn([
+            'index' => 'status_html',
+            'label' => trans('admin::app.sales.orders.index.datagrid.status'),
+            'type' => 'string',
+            'visible' => false,
             'closure' => function ($row) {
                 switch ($row->status) {
                     case Order::STATUS_PROCESSING:
                         return '<p class="label-processing">'.trans('admin::app.sales.orders.index.datagrid.processing').'</p>';
+
+                    case Order::STATUS_SHIPPED:
+                        return '<p class="label-info">'.trans('admin::app.sales.orders.index.datagrid.shipped').'</p>';
 
                     case Order::STATUS_COMPLETED:
                         return '<p class="label-active">'.trans('admin::app.sales.orders.index.datagrid.completed').'</p>';

@@ -16,6 +16,7 @@ use Webkul\Checkout\Facades\Cart;
 use Webkul\Checkout\Repositories\CartRepository;
 use Webkul\Customer\Repositories\CustomerGroupRepository;
 use Webkul\Sales\Repositories\OrderCommentRepository;
+use Webkul\Sales\Repositories\OrderItemRepository;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Transformers\OrderResource;
 
@@ -31,6 +32,7 @@ class OrderController extends Controller
         protected OrderCommentRepository $orderCommentRepository,
         protected CartRepository $cartRepository,
         protected CustomerGroupRepository $customerGroupRepository,
+        protected OrderItemRepository $orderItemRepository,
     ) {}
 
     /**
@@ -164,15 +166,67 @@ class OrderController extends Controller
      */
     public function cancel(int $id)
     {
-        $result = $this->orderRepository->cancel($id);
+        $order = $this->orderRepository->findOrFail($id);
+        
+        // Return inventory before deleting
+        $this->returnInventoryForOrder($order);
+        
+        // Delete the order
+        $order->delete();
 
-        if ($result) {
-            session()->flash('success', trans('admin::app.sales.orders.view.cancel-success'));
-        } else {
-            session()->flash('error', trans('admin::app.sales.orders.view.create-error'));
+        session()->flash('success', trans('admin::app.sales.orders.view.cancel-success'));
+
+        return redirect()->route('admin.sales.orders.index');
+    }
+
+    /**
+     * Return inventory for cancelled order.
+     */
+    protected function returnInventoryForOrder($order): void
+    {
+        \Log::info('Returning inventory for cancelled order #' . $order->id);
+        
+        foreach ($order->items as $item) {
+            // Skip if product doesn't manage stock
+            if (! $item->product || ! $item->product->manage_stock) {
+                continue;
+            }
+
+            // Get the quantity to return
+            $qty = $item->qty_ordered ?? ($item->parent?->qty_ordered ?? 0);
+
+            if ($qty <= 0) {
+                continue;
+            }
+
+            // Return from ordered_inventories (remove reserved quantity)
+            $orderedInventory = $item->product->ordered_inventories()
+                ->where('channel_id', $order->channel_id)
+                ->first();
+
+            if ($orderedInventory) {
+                $newOrderedQty = max(0, $orderedInventory->qty - $qty);
+                $orderedInventory->update(['qty' => $newOrderedQty]);
+                \Log::info('Returned ordered_inventory qty: ' . $qty . ', new qty: ' . $newOrderedQty);
+            }
+
+            // Return to actual inventory
+            $channelInventorySourceIds = $order->channel->inventory_sources->where('status', 1)->pluck('id');
+
+            foreach ($channelInventorySourceIds as $inventorySourceId) {
+                $inventory = $item->product->inventories()
+                    ->where('inventory_source_id', $inventorySourceId)
+                    ->first();
+
+                if ($inventory) {
+                    $inventory->update(['qty' => $inventory->qty + $qty]);
+                    \Log::info('Returned to inventory source #' . $inventorySourceId . ', added: ' . $qty . ', new qty: ' . $inventory->qty);
+                    break; // Only return to first available inventory source
+                }
+            }
         }
-
-        return redirect()->route('admin.sales.orders.view', $id);
+        
+        \Log::info('Inventory return complete for cancelled order #' . $order->id);
     }
 
     /**
@@ -198,6 +252,110 @@ class OrderController extends Controller
         session()->flash('success', trans('admin::app.sales.orders.view.comment-success'));
 
         return redirect()->route('admin.sales.orders.view', $id);
+    }
+
+    /**
+     * Update order status.
+     *
+     * @return JsonResponse
+     */
+    public function updateStatus(int $id)
+    {
+        $order = $this->orderRepository->findOrFail($id);
+        
+        $validated = request()->validate([
+            'status' => 'required|in:pending,processing,shipped',
+        ]);
+
+        $oldStatus = $order->status;
+        $newStatus = $validated['status'];
+
+        \Log::info('Order #' . $id . ' status changing from ' . $oldStatus . ' to ' . $newStatus);
+
+        // Reduce inventory when status changes from pending to processing or shipped
+        if ($oldStatus === 'pending' && in_array($newStatus, ['processing', 'shipped'])) {
+            \Log::info('Triggering inventory reduction for order #' . $id);
+            $this->reduceInventoryForOrder($order);
+        } else {
+            \Log::info('Skipping inventory reduction - old status: ' . $oldStatus . ', new status: ' . $newStatus);
+        }
+
+        $order->status = $newStatus;
+        $order->save();
+
+        Event::dispatch('sales.order.update-status.after', $order);
+
+        return response()->json([
+            'message' => trans('admin::app.sales.orders.update-status-success'),
+        ]);
+    }
+
+    /**
+     * Reduce inventory for order items.
+     */
+    protected function reduceInventoryForOrder($order): void
+    {
+        \Log::info('Starting inventory reduction for order #' . $order->id);
+        
+        foreach ($order->items as $item) {
+            \Log::info('Processing order item #' . $item->id);
+            
+            // Skip if product doesn't manage stock
+            if (! $item->product || ! $item->product->manage_stock) {
+                \Log::info('Skipping item #' . $item->id . ' - product does not manage stock');
+                continue;
+            }
+
+            // Get the quantity to reduce
+            $qty = $item->qty_ordered ?? ($item->parent?->qty_ordered ?? 0);
+
+            \Log::info('Quantity to reduce: ' . $qty . ' for item #' . $item->id);
+
+            if ($qty <= 0) {
+                \Log::info('Skipping item #' . $item->id . ' - qty is 0 or less');
+                continue;
+            }
+
+            // Reduce from ordered_inventories (reserved quantity)
+            $orderedInventory = $item->product->ordered_inventories()
+                ->where('channel_id', $order->channel_id)
+                ->first();
+
+            if ($orderedInventory) {
+                $oldQty = $orderedInventory->qty;
+                $newOrderedQty = max(0, $orderedInventory->qty - $qty);
+                $orderedInventory->update(['qty' => $newOrderedQty]);
+                \Log::info('Updated ordered_inventory from ' . $oldQty . ' to ' . $newOrderedQty);
+            } else {
+                \Log::info('No ordered_inventory found for product #' . $item->product_id);
+            }
+
+            // Reduce from actual inventory
+            $channelInventorySourceIds = $order->channel->inventory_sources->where('status', 1)->pluck('id');
+            \Log::info('Active inventory sources: ' . $channelInventorySourceIds->implode(', '));
+
+            foreach ($channelInventorySourceIds as $inventorySourceId) {
+                $inventory = $item->product->inventories()
+                    ->where('inventory_source_id', $inventorySourceId)
+                    ->first();
+
+                if ($inventory && $inventory->qty > 0) {
+                    $oldInventoryQty = $inventory->qty;
+                    $reduceQty = min($qty, $inventory->qty);
+                    $inventory->update(['qty' => $inventory->qty - $reduceQty]);
+                    \Log::info('Updated inventory source #' . $inventorySourceId . ' from ' . $oldInventoryQty . ' to ' . $inventory->qty);
+                    $qty -= $reduceQty;
+
+                    if ($qty <= 0) {
+                        break;
+                    }
+                } else {
+                    \Log::info('Inventory source #' . $inventorySourceId . ' has qty: ' . ($inventory?->qty ?? 'null'));
+                }
+            }
+        }
+        
+        \Log::info('Inventory reduction complete for order #' . $order->id);
     }
 
     /**

@@ -51,28 +51,6 @@
             @endif
 
             @if (
-                $order->canInvoice()
-                && bouncer()->hasPermission('sales.invoices.create')
-                && $order->payment->method !== 'paypal_standard'
-            )
-                @include('admin::sales.invoices.create')
-            @endif
-
-            @if (
-                $order->canShip()
-                && bouncer()->hasPermission('sales.shipments.create')
-            )
-                @include('admin::sales.shipments.create')
-            @endif
-
-            @if (
-                $order->canRefund()
-                && bouncer()->hasPermission('sales.refunds.create')
-            )
-                @include('admin::sales.refunds.create')
-            @endif
-
-            @if (
                 $order->canCancel()
                 && bouncer()->hasPermission('sales.orders.cancel')
             )

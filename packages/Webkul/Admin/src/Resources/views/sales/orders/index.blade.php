@@ -111,7 +111,17 @@
                             @{{ record.created_at }}
                         </p>
                         
-                        <p v-html="record.status"></p>
+                        <!-- Status Dropdown -->
+                        <select
+                            class="rounded-md border px-2 py-1 text-xs sm:text-sm cursor-pointer hover:border-gray-400 focus:border-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                            :value="record.status"
+                            :data-order-id="record.id"
+                            onchange="window.updateOrderStatus(this)"
+                        >
+                            <option value="pending">@lang('admin::app.sales.orders.index.datagrid.pending')</option>
+                            <option value="processing">@lang('admin::app.sales.orders.index.datagrid.processing')</option>
+                            <option value="shipped">@lang('admin::app.sales.orders.index.datagrid.shipped')</option>
+                        </select>
                     </div>
 
                     <!-- Total Amount, Pay Via, Channel -->
@@ -325,8 +335,62 @@
                             });
                     },
                     --}}
+
+                    updateOrderStatus(orderId, status) {
+                        console.log('Updating order:', orderId, 'to status:', status);
+                        
+                        this.$axios.post(`{{ route('admin.sales.orders.update_status', ':id') }}`.replace(':id', orderId), {
+                            status: status
+                        })
+                        .then((response) => {
+                            console.log('Success:', response.data);
+                            this.$emitter.emit('add-flash', { 
+                                type: 'success', 
+                                message: response.data.message 
+                            });
+                            // Reload the datagrid to show updated status
+                            this.$refs.datagridRef?.fetchRecords();
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                            console.error('Response:', error.response?.data);
+                            this.$emitter.emit('add-flash', { 
+                                type: 'error', 
+                                message: error.response?.data?.message || 'Failed to update status' 
+                            });
+                        });
+                    },
                 }
             });
+        </script>
+        
+        <script>
+            // Global function for order status update (accessible from datagrid template)
+            window.updateOrderStatus = function(selectElement) {
+                const orderId = selectElement.dataset.orderId;
+                const status = selectElement.value;
+                
+                console.log('Updating order:', orderId, 'to status:', status);
+                
+                axios.post("{{ route('admin.sales.orders.update_status', ':id') }}".replace(':id', orderId), {
+                    status: status
+                })
+                .then((response) => {
+                    console.log('Success:', response.data);
+                    window.$emitter?.emit('add-flash', { 
+                        type: 'success', 
+                        message: response.data.message 
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    console.error('Response:', error.response?.data);
+                    window.$emitter?.emit('add-flash', { 
+                        type: 'error', 
+                        message: error.response?.data?.message || 'Failed to update status' 
+                    });
+                });
+            }
         </script>
     @endPushOnce
 </x-admin::layouts>
