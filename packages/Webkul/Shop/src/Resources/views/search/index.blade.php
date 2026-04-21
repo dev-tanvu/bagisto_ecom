@@ -600,6 +600,7 @@
                     var price          = product.min_price || '';
                     var isSaleable     = !!product.is_saleable;
                     var cardId         = 'sp-' + product.id;
+                    
                     var badge          = product.is_new ? '<div style="position:absolute;top:10px;left:10px;z-index:4;background:#ef4444;color:#fff;font-size:10px;font-weight:600;padding:3px 8px;border-radius:9999px;font-family:Montserrat,sans-serif;letter-spacing:.3px;">New</div>' : '';
 
                     var images = primaryImage
@@ -610,23 +611,39 @@
                         : '<div style="width:100%;aspect-ratio:2/3;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:12px;font-family:Montserrat,sans-serif;">No image</div>';
 
                     var cta;
+                    var isConfigurable = product.type === 'configurable';
 
-                    if (isMobile) {
+                    if (isConfigurable && product.color_swatches && product.color_swatches.length) {
+                        // Render color swatches for configurable products
+                        var swatchHtml = '<div style="display:flex;flex-wrap:wrap;gap:5px;">';
+                        product.color_swatches.forEach(function (swatch) {
+                            swatchHtml += '<a href="/' + product.url_key + '" onclick="event.stopPropagation()" '
+                                + 'style="display:block;width:20px;height:20px;border-radius:9999px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);background:' + swatch.hex + ';transition:transform .15s;flex-shrink:0;" '
+                                + 'title="' + esc(swatch.name || '') + '"></a>';
+                        });
+                        swatchHtml += '</div>';
+                        cta = '<div style="position:absolute;bottom:12px;left:0;right:0;z-index:4;pointer-events:auto;display:flex;justify-content:center;flex-wrap:wrap;gap:5px;padding:0 10px;">' + swatchHtml + '</div>';
+                    } else if (isMobile) {
                         var cartIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>';
                         var eyeIcon  = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+                        
+                        // For configurable products, always show view icon and navigate to product page
+                        var showCartButton = isSaleable && !isConfigurable;
+                        
                         cta = '<button data-role="cta" '
-                            + 'onclick="event.stopPropagation();event.preventDefault();' + (isSaleable ? 'spAddToCartById(this,' + product.id + ')' : 'spGoTo(event,\'' + url + '\')') + '" '
-                            + 'ontouchend="event.stopPropagation();event.preventDefault();' + (isSaleable ? 'spAddToCartById(this,' + product.id + ')' : 'spGoTo(event,\'' + url + '\')') + '" '
+                            + 'onclick="event.stopPropagation();event.preventDefault();' + (showCartButton ? 'spAddToCartById(this,' + product.id + ')' : 'spGoTo(event,\'' + url + '\')') + '" '
+                            + 'ontouchend="event.stopPropagation();event.preventDefault();' + (showCartButton ? 'spAddToCartById(this,' + product.id + ')' : 'spGoTo(event,\'' + url + '\')') + '" '
                             + 'style="position:absolute;bottom:10px;right:10px;z-index:4;width:44px;height:44px;background:#111;color:#fff;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color:transparent;">'
-                            + (isSaleable ? cartIcon : eyeIcon)
+                            + (showCartButton ? cartIcon : eyeIcon)
                             + '</button>';
                     } else {
-                        var label    = isSaleable ? 'Add to cart' : 'View product';
-                        var hoverIcon = isSaleable
+                        // For configurable products, always show "View Product" instead of "Add to cart"
+                        var label    = (isSaleable && !isConfigurable) ? 'Add to cart' : 'View product';
+                        var hoverIcon = (isSaleable && !isConfigurable)
                             ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>'
                             : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
                         cta = '<div style="position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;pointer-events:auto;">'
-                            + '<button data-role="cta" onclick="event.stopPropagation();event.preventDefault();' + (isSaleable ? 'spAddToCart(event,' + product.id + ')' : 'spGoTo(event,\'' + url + '\')') + '" '
+                            + '<button data-role="cta" onclick="event.stopPropagation();event.preventDefault();' + ((isSaleable && !isConfigurable) ? 'spAddToCart(event,' + product.id + ')' : 'spGoTo(event,\'' + url + '\')') + '" '
                             + 'style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 28px;background:#111;color:#fff;border:none;outline:none;border-radius:5px;cursor:pointer;transform:translateY(0);transition:transform .3s ease;overflow:hidden;position:relative;min-width:140px;pointer-events:auto;-webkit-tap-highlight-color:transparent;">'
                             + '<span data-role="btn-text" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;font-family:Montserrat,sans-serif;letter-spacing:.2px;transition:transform .28s ease,opacity .28s ease;transform:translateY(0);opacity:1;">' + label + '</span>'
                             + '<span data-role="btn-icon" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:transform .28s ease,opacity .28s ease;transform:translateY(100%);opacity:0;">' + hoverIcon + '</span>'

@@ -27,7 +27,8 @@ Route::group(['middleware' => ['api']], function () {
     /**
      * Attribute options route (placed before products to avoid route conflicts).
      */
-    Route::get('attributes/options', [ProductController::class, 'attributeOptions']);
+    Route::get('attributes/options', [ProductController::class, 'attributeOptions'])->name('admin.api.attributes.options');
+    Route::post('attributes/color-options', [ProductController::class, 'createColorOption'])->name('admin.api.attributes.color-options');
 
     /**
      * Products routes.

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Product\Repositories\ProductImageRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
@@ -23,7 +24,8 @@ class ProductController extends Controller
         protected ProductRepository $productRepository,
         protected ProductInventoryRepository $productInventoryRepository,
         protected ProductImageRepository $productImageRepository,
-        protected AttributeRepository $attributeRepository
+        protected AttributeRepository $attributeRepository,
+        protected AttributeOptionRepository $attributeOptionRepository
     ) {}
 
     /**
@@ -31,7 +33,11 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = $this->productRepository->getModel()->newQuery()->with(['images', 'product_flats', 'inventories']);
+        $query = $this->productRepository->getModel()->newQuery()->with(['images', 'product_flats', 'inventories', 'variants']);
+
+        // Hide variant products (simple products that have a parent) from the list
+        // Only show parent configurable products and standalone simple products
+        $query->whereNull('parent_id');
 
         if ($request->has('status')) {
             $query->where('status', $request->get('status'));
@@ -54,7 +60,7 @@ class ProductController extends Controller
             $flat = $product->product_flats->where('locale', app()->getLocale())->first()
                 ?? $product->product_flats->first();
 
-            return [
+            $data = [
                 'id' => $product->id,
                 'sku' => $product->sku,
                 'type' => $product->type,
@@ -74,6 +80,26 @@ class ProductController extends Controller
                 'created_at' => $product->created_at,
                 'updated_at' => $product->updated_at,
             ];
+
+            // If it's a configurable product, include variants info
+            if ($product->type === 'configurable') {
+                $data['variants_count'] = $product->variants ? $product->variants->count() : 0;
+                $data['variants'] = $product->variants ? $product->variants->map(function ($variant) {
+                    $variantFlat = $variant->product_flats->where('locale', app()->getLocale())->first()
+                        ?? $variant->product_flats->first();
+
+                    return [
+                        'id' => $variant->id,
+                        'sku' => $variant->sku,
+                        'name' => $variantFlat?->name ?? $variant->sku,
+                        'price' => $variantFlat?->price ?? null,
+                        'quantity' => $variant->inventories->sum('qty'),
+                        'stock_status' => $variant->inventories->sum('qty') > 0 ? 'in_stock' : 'out_of_stock',
+                    ];
+                })->toArray() : [];
+            }
+
+            return $data;
         });
 
         return response()->json([
@@ -170,12 +196,72 @@ class ProductController extends Controller
                         'label' => $option->translations->where('locale', 'en')->first()?->label
                             ?? $option->admin_name,
                         'sort_order' => $option->sort_order,
+                        'swatch_value' => $option->swatch_value ?? null,
                     ];
                 })->sortBy('sort_order')->values()->toArray();
             }
         }
 
         return response()->json(['data' => $result]);
+    }
+
+    /**
+     * Create a new color attribute option on-the-fly.
+     * Called from the product creation form when user adds a custom color.
+     */
+    public function createColorOption(Request $request): JsonResponse
+    {
+        $name = trim($request->input('name', ''));
+        $swatchValue = trim($request->input('swatch_value', ''));
+
+        if (! $name) {
+            return response()->json(['error' => 'Color name is required'], 422);
+        }
+
+        $colorAttribute = $this->attributeRepository->findOneByField('code', 'color');
+
+        if (! $colorAttribute) {
+            return response()->json(['error' => 'Color attribute not found'], 404);
+        }
+
+        // Check if option with same name already exists
+        $existing = $colorAttribute->options->first(fn ($o) => strtolower($o->admin_name) === strtolower($name));
+
+        if ($existing) {
+            return response()->json([
+                'data' => [
+                    'id' => $existing->id,
+                    'name' => $existing->admin_name,
+                    'swatch_value' => $existing->swatch_value,
+                ],
+            ]);
+        }
+
+        $maxSortOrder = $colorAttribute->options->max('sort_order') ?? 0;
+
+        $option = $this->attributeOptionRepository->create([
+            'attribute_id' => $colorAttribute->id,
+            'admin_name' => $name,
+            'swatch_value' => $swatchValue ?: null,
+            'sort_order' => $maxSortOrder + 1,
+        ]);
+
+        // Also create translation for all locales
+        foreach (core()->getAllLocales() as $locale) {
+            \DB::table('attribute_option_translations')->insert([
+                'attribute_option_id' => $option->id,
+                'locale' => $locale->code,
+                'label' => $name,
+            ]);
+        }
+
+        return response()->json([
+            'data' => [
+                'id' => $option->id,
+                'name' => $option->admin_name,
+                'swatch_value' => $option->swatch_value,
+            ],
+        ]);
     }
 
     /**

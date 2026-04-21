@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(CustomerSeeder::class, false, ['parameters' => $parameters]);
 
-        $this->call(CMSSeeder::class, false, ['parameters' => $parameters]);
+        // $this->call(CMSSeeder::class, false, ['parameters' => $parameters]);
 
         $this->call(InventorySeeder::class, false, ['parameters' => $parameters]);
 
@@ -42,6 +42,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(UserSeeder::class, false, ['parameters' => $parameters]);
 
-        $this->call(RMASeeder::class, false, ['parameters' => $parameters]);
+        // $this->call(RMASeeder::class, false, ['parameters' => $parameters]);
     }
 }

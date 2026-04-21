@@ -279,7 +279,7 @@
 </style>
 
 <!-- Page Layout -->
-<x-shop::layouts>
+<x-shop::layouts :has-feature="false">
     <!-- Page Title -->
     <x-slot:title>
         {{ trim($product->meta_title) != "" ? $product->meta_title : $product->name }}

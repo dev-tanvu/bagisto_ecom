@@ -4,7 +4,9 @@ namespace Webkul\Admin\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Webkul\Tax\Facades\Tax;
+
+// REMOVED: Tax package deleted
+// use Webkul\Tax\Facades\Tax;
 
 class CartResource extends JsonResource
 {
@@ -16,9 +18,11 @@ class CartResource extends JsonResource
      */
     public function toArray($request)
     {
-        $taxes = collect(Tax::getTaxRatesWithAmount($this, true))->map(function ($rate) {
-            return core()->currency($rate ?? 0);
-        });
+        // REMOVED: Tax package deleted
+        // $taxes = collect(Tax::getTaxRatesWithAmount($this, true))->map(function ($rate) {
+        //     return core()->currency($rate ?? 0);
+        // });
+        $taxes = [];
 
         return [
             'id' => $this->id,
@@ -35,8 +39,8 @@ class CartResource extends JsonResource
             'formatted_shipping_amount' => core()->formatPrice($this->base_shipping_amount),
             'shipping_amount_incl_tax' => $this->base_shipping_amount_incl_tax,
             'formatted_shipping_amount_incl_tax' => core()->formatPrice($this->base_shipping_amount_incl_tax),
-            'tax_total' => $this->base_tax_total,
-            'formatted_tax_total' => core()->formatPrice($this->tax_total),
+            'tax_total' => 0, // REMOVED: Tax package deleted
+            'formatted_tax_total' => core()->formatPrice(0), // REMOVED: Tax package deleted
             'applied_taxes' => $taxes,
             'coupon_code' => $this->coupon_code,
             'discount_amount' => $this->base_discount_amount,
