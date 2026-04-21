@@ -16,7 +16,9 @@ use Webkul\Product\Helpers\Indexers\Price\Configurable as ConfigurableIndexer;
 use Webkul\Sales\Contracts\InvoiceItem;
 use Webkul\Sales\Contracts\OrderItem;
 use Webkul\Sales\Contracts\ShipmentItem;
-use Webkul\Tax\Facades\Tax;
+
+// REMOVED: Tax package deleted
+// use Webkul\Tax\Facades\Tax;
 
 class Configurable extends AbstractType
 {
@@ -527,11 +529,13 @@ class Configurable extends AbstractType
 
         $basePrice = $item->child->getTypeInstance()->getFinalPrice($item->quantity);
 
-        if (Tax::isInclusiveTaxProductPrices()) {
-            $itemBasePrice = $item->base_price_incl_tax;
-        } else {
-            $itemBasePrice = $item->base_price;
-        }
+        // REMOVED: Tax package deleted - always use base_price
+        // if (Tax::isInclusiveTaxProductPrices()) {
+        //     $itemBasePrice = $item->base_price_incl_tax;
+        // } else {
+        //     $itemBasePrice = $item->base_price;
+        // }
+        $itemBasePrice = $item->base_price;
 
         if ($basePrice == $itemBasePrice) {
             return $validation;

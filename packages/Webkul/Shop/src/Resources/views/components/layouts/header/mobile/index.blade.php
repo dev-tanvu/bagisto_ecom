@@ -364,11 +364,11 @@
             methods: {
                 initCategories() {
                     try {
-                        const stored = localStorage.getItem('categories');
+                        const stored = localStorage.getItem('categories_v2');
 
                         if (stored) {
                             this.categories = JSON.parse(stored);
-                            this.isLoading = false;
+                            this.autoExpandFirst();
                             return;
                         }
 
@@ -380,11 +380,21 @@
                     this.$axios.get("{{ route('shop.api.categories.tree') }}")
                         .then(response => {
                             this.categories = response.data.data;
-                            localStorage.setItem('categories', JSON.stringify(this.categories));
+                            localStorage.setItem('categories_v2', JSON.stringify(this.categories));
+                            this.autoExpandFirst();
                         })
                         .catch(error => {
                             console.log(error);
                         });
+                },
+
+                autoExpandFirst() {
+                    if (this.categories.length > 0) {
+                        const first = this.categories[0];
+                        if (first.children && first.children.length) {
+                            this.expandedCategories = { [first.id]: true };
+                        }
+                    }
                 },
 
                 showThirdLevel(secondLevelCategory, parentCategory, event) {

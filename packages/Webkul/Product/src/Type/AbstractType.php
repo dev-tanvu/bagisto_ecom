@@ -27,7 +27,9 @@ use Webkul\Product\Repositories\ProductVideoRepository;
 use Webkul\Sales\Contracts\InvoiceItem;
 use Webkul\Sales\Contracts\OrderItem;
 use Webkul\Sales\Contracts\ShipmentItem;
-use Webkul\Tax\Models\TaxCategory;
+
+// REMOVED: Tax package deleted
+// use Webkul\Tax\Models\TaxCategory;
 
 abstract class AbstractType
 {
@@ -767,13 +769,12 @@ abstract class AbstractType
     /**
      * Get tax category.
      *
-     * @return TaxCategory
+     * @return mixed
      */
     public function getTaxCategory()
     {
-        $taxCategoryId = $this->product->parent?->tax_category_id ?? $this->product->tax_category_id;
-
-        return core()->getTaxCategoryById($taxCategoryId);
+        // REMOVED: Tax package deleted
+        return null;
     }
 
     /**

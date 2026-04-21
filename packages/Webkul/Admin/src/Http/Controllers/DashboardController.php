@@ -2,9 +2,11 @@
 
 namespace Webkul\Admin\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Webkul\Admin\Helpers\Dashboard;
+use Webkul\Sales\Models\Order;
 
 class DashboardController extends Controller
 {
@@ -36,9 +38,35 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        // Handle date filter from request
+        if (request()->has('start') && request()->has('end')) {
+            $startDate = Carbon::parse(request('start'));
+            $endDate = Carbon::parse(request('end'));
+        } else {
+            $startDate = $this->dashboardHelper->getStartDate();
+            $endDate = $this->dashboardHelper->getEndDate();
+        }
+
+        // Get stats for the selected date range
+        $overAllStats = $this->dashboardHelper->getOverAllStats();
+
+        // Calculate pending orders
+        $pendingOrders = Order::where('status', 'pending')->count();
+
+        // Get today's stats separately
+        $todayStats = $this->dashboardHelper->getTodayStats();
+
         return view('admin::dashboard.index')->with([
-            'startDate' => $this->dashboardHelper->getStartDate(),
-            'endDate' => $this->dashboardHelper->getEndDate(),
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'statistics' => [
+                'today_orders' => $todayStats['total_orders']['current'] ?? 0,
+                'today_revenue' => $todayStats['total_sales']['current'] ?? 0,
+                'pending_orders' => $pendingOrders,
+                'total_customers' => $overAllStats['total_customers']['current'] ?? 0,
+                'total_orders' => $overAllStats['total_orders']['current'] ?? 0,
+                'total_sales' => $overAllStats['total_sales']['current'] ?? 0,
+            ],
         ]);
     }
 

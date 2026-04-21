@@ -123,6 +123,7 @@ return [
             'add-customer' => 'Add Customer',
             'add-product' => 'Add Product',
             'all-channels' => 'All Channels',
+            'apply-filter' => 'Apply',
             'attribute-code' => 'Attribute Code',
             'average-sale' => 'Average Order Sale',
             'color' => 'Color',

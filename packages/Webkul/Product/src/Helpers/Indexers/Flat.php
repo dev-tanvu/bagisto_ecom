@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Helpers\Indexers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Webkul\Product\Contracts\Product;
 use Webkul\Product\Helpers\ProductType;
@@ -143,6 +144,17 @@ class Flat extends AbstractIndexer
         foreach (core()->getAllChannels() as $channel) {
             if (in_array($channel->id, $channelIds)) {
                 foreach ($channel->locales as $locale) {
+                    // Resolve the product_flat.id of the parent (for the parent_id FK on product_flat)
+                    $parentFlatId = null;
+
+                    if ($product->parent_id) {
+                        $parentFlatId = DB::table('product_flat')
+                            ->where('product_id', $product->parent_id)
+                            ->where('channel', $channel->code)
+                            ->where('locale', $locale->code)
+                            ->value('id');
+                    }
+
                     $productFlat = $this->productFlatRepository->updateOrCreate([
                         'product_id' => $product->id,
                         'channel' => $channel->code,
@@ -151,6 +163,7 @@ class Flat extends AbstractIndexer
                         'type' => $product->type,
                         'sku' => $product->sku,
                         'attribute_family_id' => $product->attribute_family_id,
+                        'parent_id' => $parentFlatId,
                     ]);
 
                     foreach ($familyAttributes as $attribute) {

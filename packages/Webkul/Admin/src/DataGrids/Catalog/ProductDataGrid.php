@@ -68,6 +68,39 @@ class ProductDataGrid extends DataGrid
             )
             ->addSelect(DB::raw('SUM(DISTINCT '.$tablePrefix.'product_inventories.qty) as quantity'))
             ->addSelect(DB::raw('COUNT(DISTINCT '.$tablePrefix.'product_images.id) as images_count'))
+            // Price range for configurable products (min/max across variants)
+            ->addSelect(DB::raw('
+                COALESCE(
+                    (SELECT MIN(pf_v.price)
+                     FROM '.$tablePrefix.'product_flat pf_v
+                     INNER JOIN '.$tablePrefix.'products p_v ON pf_v.product_id = p_v.id
+                     WHERE p_v.parent_id = '.$tablePrefix.'product_flat.product_id
+                       AND pf_v.locale = '.$tablePrefix.'product_flat.locale
+                       AND pf_v.price IS NOT NULL AND pf_v.price > 0),
+                    '.$tablePrefix.'product_flat.price
+                ) as min_price
+            '))
+            ->addSelect(DB::raw('
+                COALESCE(
+                    (SELECT MAX(pf_v.price)
+                     FROM '.$tablePrefix.'product_flat pf_v
+                     INNER JOIN '.$tablePrefix.'products p_v ON pf_v.product_id = p_v.id
+                     WHERE p_v.parent_id = '.$tablePrefix.'product_flat.product_id
+                       AND pf_v.locale = '.$tablePrefix.'product_flat.locale
+                       AND pf_v.price IS NOT NULL AND pf_v.price > 0),
+                    '.$tablePrefix.'product_flat.price
+                ) as max_price
+            '))
+            // Total quantity combining all variants
+            ->addSelect(DB::raw('
+                COALESCE(
+                    (SELECT SUM(pi_v.qty)
+                     FROM '.$tablePrefix.'product_inventories pi_v
+                     INNER JOIN '.$tablePrefix.'products p_v ON pi_v.product_id = p_v.id
+                     WHERE p_v.parent_id = '.$tablePrefix.'product_flat.product_id),
+                    SUM(DISTINCT '.$tablePrefix.'product_inventories.qty)
+                ) as total_quantity
+            '))
             ->where('product_flat.locale', app()->getLocale())
             ->whereNull('product_flat.parent_id')  // Only show parent products, not variations
             ->groupBy('product_flat.product_id');
@@ -108,32 +141,7 @@ class ProductDataGrid extends DataGrid
             ]);
         }
 
-        $this->addColumn([
-            'index' => 'name',
-            'label' => trans('admin::app.catalog.products.index.datagrid.name'),
-            'type' => 'string',
-            'searchable' => true,
-            'filterable' => true,
-            'sortable' => true,
-        ]);
-
-        $this->addColumn([
-            'index' => 'sku',
-            'label' => trans('admin::app.catalog.products.index.datagrid.sku'),
-            'type' => 'string',
-            'filterable' => true,
-            'sortable' => true,
-        ]);
-
-        $this->addColumn([
-            'index' => 'attribute_family',
-            'label' => trans('admin::app.catalog.products.index.datagrid.attribute-family'),
-            'type' => 'string',
-            'filterable' => true,
-            'filterable_type' => 'dropdown',
-            'filterable_options' => $this->attributeFamilyRepository->all(['name as label', 'id as value'])->toArray(),
-        ]);
-
+        // 1. Image
         $this->addColumn([
             'index' => 'base_image',
             'label' => trans('admin::app.catalog.products.index.datagrid.image'),
@@ -152,29 +160,67 @@ class ProductDataGrid extends DataGrid
             },
         ]);
 
+        // 2. Name
+        $this->addColumn([
+            'index' => 'name',
+            'label' => trans('admin::app.catalog.products.index.datagrid.name'),
+            'type' => 'string',
+            'searchable' => true,
+            'filterable' => true,
+            'sortable' => true,
+        ]);
+
+        // 3. Price — show range for configurable, flat price for others
         $this->addColumn([
             'index' => 'price',
             'label' => trans('admin::app.catalog.products.index.datagrid.price'),
             'type' => 'decimal',
             'filterable' => true,
             'sortable' => true,
+            'closure' => function ($row) {
+                $currency = core()->getCurrentCurrencyCode();
+
+                if ($row->type === 'configurable') {
+                    $min = (float) ($row->min_price ?? 0);
+                    $max = (float) ($row->max_price ?? 0);
+
+                    if ($min > 0 && $max > 0 && $min !== $max) {
+                        return core()->formatPrice($min, $currency).' – '.core()->formatPrice($max, $currency);
+                    }
+
+                    if ($min > 0) {
+                        return core()->formatPrice($min, $currency);
+                    }
+
+                    return 'N/A';
+                }
+
+                return core()->formatPrice((float) ($row->price ?? 0), $currency);
+            },
         ]);
 
+        // 4. Quantity — combined for configurable, direct for others
         $this->addColumn([
             'index' => 'quantity',
             'label' => trans('admin::app.catalog.products.index.datagrid.qty'),
             'type' => 'integer',
             'sortable' => true,
+            'closure' => function ($row) {
+                if ($row->type === 'configurable') {
+                    $qty = (int) ($row->total_quantity ?? 0);
+                } else {
+                    $qty = (int) ($row->quantity ?? 0);
+                }
+
+                if ($qty > 0) {
+                    return '<span class="text-green-600 font-semibold">'.$qty.' in stock</span>';
+                }
+
+                return '<span class="text-red-600 font-semibold">Out of stock</span>';
+            },
         ]);
 
-        $this->addColumn([
-            'index' => 'product_id',
-            'label' => trans('admin::app.catalog.products.index.datagrid.id'),
-            'type' => 'integer',
-            'filterable' => true,
-            'sortable' => true,
-        ]);
-
+        // 5. Status
         $this->addColumn([
             'index' => 'status',
             'label' => trans('admin::app.catalog.products.index.datagrid.status'),
@@ -193,10 +239,40 @@ class ProductDataGrid extends DataGrid
             'sortable' => true,
         ]);
 
+        // Hidden / secondary columns
+        $this->addColumn([
+            'index' => 'sku',
+            'label' => trans('admin::app.catalog.products.index.datagrid.sku'),
+            'type' => 'string',
+            'filterable' => true,
+            'sortable' => true,
+            'visibility' => false,
+        ]);
+
+        $this->addColumn([
+            'index' => 'attribute_family',
+            'label' => trans('admin::app.catalog.products.index.datagrid.attribute-family'),
+            'type' => 'string',
+            'filterable' => true,
+            'filterable_type' => 'dropdown',
+            'filterable_options' => $this->attributeFamilyRepository->all(['name as label', 'id as value'])->toArray(),
+            'visibility' => false,
+        ]);
+
+        $this->addColumn([
+            'index' => 'product_id',
+            'label' => trans('admin::app.catalog.products.index.datagrid.id'),
+            'type' => 'integer',
+            'filterable' => true,
+            'sortable' => true,
+            'visibility' => false,
+        ]);
+
         $this->addColumn([
             'index' => 'category_name',
             'label' => trans('admin::app.catalog.products.index.datagrid.category'),
             'type' => 'string',
+            'visibility' => false,
         ]);
 
         $this->addColumn([
@@ -210,6 +286,7 @@ class ProductDataGrid extends DataGrid
                 ->values()
                 ->toArray(),
             'sortable' => true,
+            'visibility' => false,
         ]);
     }
 

@@ -106,7 +106,22 @@
                     @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
                         {!! view_render_event('frooxi.shop.components.products.card.add_to_cart.before') !!}
 
-                        <template v-if="product.is_saleable">
+                        <!-- Configurable Products: Show Color Swatches -->
+                        <template v-if="product.type === 'configurable' && product.color_swatches && product.color_swatches.length">
+                            <div class="pointer-events-auto absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-1.5" style="padding:0 10px;">
+                                <a
+                                    v-for="swatch in product.color_swatches"
+                                    :key="swatch.id"
+                                    :href="`{!! $productBaseUrl !!}/${product.url_key}`"
+                                    class="block h-5 w-5 rounded-full border-2 border-white shadow transition-transform hover:scale-110"
+                                    :style="{ backgroundColor: swatch.hex }"
+                                    :title="swatch.name"
+                                ></a>
+                            </div>
+                        </template>
+
+                        <!-- Simple/Other Products: Show Add to Cart Button -->
+                        <template v-else-if="product.is_saleable">
                             <button
                                 class="pointer-events-auto absolute bottom-3 z-10 flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-950 text-white shadow-lg transition hover:bg-black md:hidden ltr:right-3 rtl:left-3"
                                 :aria-label="'@lang('shop::app.components.products.card.add-to-cart')'"

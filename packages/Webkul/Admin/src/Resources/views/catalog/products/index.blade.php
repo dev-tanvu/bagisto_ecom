@@ -57,56 +57,7 @@
             </template>
 
             <template v-else>
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
-                            @if ($hasPermission)
-                            <th class="px-4 py-3 w-12">
-                                <label
-                                    class="flex w-max cursor-pointer select-none items-center gap-1"
-                                    for="mass_action_select_all_records"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        name="mass_action_select_all_records"
-                                        id="mass_action_select_all_records"
-                                        class="peer hidden"
-                                        :checked="['all', 'partial'].includes(applied.massActions.meta.mode)"
-                                        @change="selectAll"
-                                    >
-                                    <span
-                                        class="icon-uncheckbox cursor-pointer rounded-md text-2xl"
-                                        :class="[
-                                            applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checked peer-checked:text-blue-600' : (
-                                                applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-blue-600' : ''
-                                            ),
-                                        ]"
-                                    >
-                                    </span>
-                                </label>
-                            </th>
-                            @endif
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider w-24">
-                                Image
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                Name
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                Price
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                Quantity
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                </table>
+                <span></span>
             </template>
         </template>
 
@@ -122,18 +73,65 @@
                 <x-admin::shimmer.datagrid.table.body :isMultiRow="true" />
             </template>
 
-            <!-- Table View -->
             <template v-else>
                 <div class="overflow-x-auto">
-                    <table class="w-full border-collapse">
+                    <table class="w-full table-fixed border-collapse">
+                        <colgroup>
+                            @if ($hasPermission)
+                            <col style="width: 48px;" />
+                            @endif
+                            <col style="width: 90px;" />  {{-- Image --}}
+                            <col style="width: auto;" />   {{-- Name --}}
+                            <col style="width: 180px;" />  {{-- Price --}}
+                            <col style="width: 130px;" />  {{-- Quantity --}}
+                            <col style="width: 100px;" />  {{-- Status --}}
+                            <col style="width: 140px;" />  {{-- Actions --}}
+                        </colgroup>
+                        <thead>
+                            <tr class="border-b bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
+                                @if ($hasPermission)
+                                <th class="px-4 py-3">
+                                    <label
+                                        class="flex w-max cursor-pointer select-none items-center gap-1"
+                                        for="mass_action_select_all_records"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            name="mass_action_select_all_records"
+                                            id="mass_action_select_all_records"
+                                            class="peer hidden"
+                                            :checked="['all', 'partial'].includes(applied.massActions.meta.mode)"
+                                            @change="selectAll"
+                                        >
+                                        <span
+                                            class="icon-uncheckbox cursor-pointer rounded-md text-2xl"
+                                            :class="[
+                                                applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checked peer-checked:text-blue-600' : (
+                                                    applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-blue-600' : ''
+                                                ),
+                                            ]"
+                                        >
+                                        </span>
+                                    </label>
+                                </th>
+                                @endif
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Image</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Price</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Quantity</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr
                                 class="border-b transition-all hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-950"
                                 v-for="record in available.records"
+                                :key="record.product_id"
                             >
                                 <!-- Checkbox -->
                                 @if ($hasPermission)
-                                <td class="px-4 py-3 w-12">
+                                <td class="px-4 py-3">
                                     <input
                                         type="checkbox"
                                         :name="`mass_action_select_record_${record.product_id}`"
@@ -151,69 +149,37 @@
 
                                 <!-- Product Image -->
                                 <td class="px-4 py-3">
-                                    <div class="relative">
-                                        <template v-if="record.base_image">
-                                            <img
-                                                class="h-16 w-16 rounded object-cover"
-                                                :src='record.base_image'
-                                            />
-                                            <span class="absolute -bottom-1 -right-1 rounded-full bg-darkPink px-1 text-xs font-bold leading-normal text-white">
-                                                @{{ record.images_count }}
-                                            </span>
-                                        </template>
-                                        <template v-else>
-                                            <div class="relative h-16 w-16 rounded border border-dashed border-gray-300 dark:border-gray-800 dark:mix-blend-exclusion dark:invert">
-                                                <img src="{{ frooxi_asset('images/product-placeholders/front.svg')}}" class="h-full w-full object-cover">
-                                                <p class="absolute bottom-0 w-full text-center text-[6px] font-semibold text-gray-400">
-                                                    @lang('admin::app.catalog.products.index.datagrid.product-image')
-                                                </p>
-                                            </div>
-                                        </template>
-                                    </div>
+                                    <template v-if="record.base_image">
+                                        <img class="h-16 w-16 rounded object-cover" :src="record.base_image" />
+                                    </template>
+                                    <template v-else>
+                                        <div class="relative h-16 w-16 rounded border border-dashed border-gray-300 dark:border-gray-800 dark:mix-blend-exclusion dark:invert">
+                                            <img src="{{ frooxi_asset('images/product-placeholders/front.svg')}}" class="h-full w-full object-cover">
+                                            <p class="absolute bottom-0 w-full text-center text-[6px] font-semibold text-gray-400">
+                                                @lang('admin::app.catalog.products.index.datagrid.product-image')
+                                            </p>
+                                        </div>
+                                    </template>
                                 </td>
 
                                 <!-- Product Name & SKU -->
                                 <td class="px-4 py-3">
-                                    <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                    <p class="text-sm font-semibold text-gray-800 dark:text-white truncate">
                                         @{{ record.name }}
                                     </p>
-                                    <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                         SKU: @{{ record.sku }}
                                     </p>
                                 </td>
 
-                                <!-- Price -->
+                                <!-- Price (already formatted by DataGrid closure) -->
                                 <td class="px-4 py-3">
-                                    <p class="text-sm font-semibold text-gray-800 dark:text-white">
-                                        @{{ $admin.formatPrice(record.price) }}
-                                    </p>
+                                    <p class="text-sm font-semibold text-gray-800 dark:text-white" v-html="record.price"></p>
                                 </td>
 
-                                <!-- Stock/Quantity -->
+                                <!-- Quantity (already formatted by DataGrid closure) -->
                                 <td class="px-4 py-3">
-                                    <div v-if="['configurable', 'bundle', 'grouped', 'booking'].includes(record.type)">
-                                        <p class="text-xs text-gray-600 dark:text-gray-300">
-                                            <span class="text-gray-500">N/A</span>
-                                        </p>
-                                    </div>
-                                    <div v-else>
-                                        <p
-                                            class="text-xs"
-                                            v-if="record.quantity > 0"
-                                        >
-                                            <span class="text-green-600 font-semibold">
-                                                @{{ record.quantity }} in stock
-                                            </span>
-                                        </p>
-                                        <p
-                                            class="text-xs"
-                                            v-else
-                                        >
-                                            <span class="text-red-600 font-semibold">
-                                                @lang('admin::app.catalog.products.index.datagrid.out-of-stock')
-                                            </span>
-                                        </p>
-                                    </div>
+                                    <p class="text-sm" v-html="record.quantity"></p>
                                 </td>
 
                                 <!-- Status -->
@@ -226,7 +192,6 @@
                                 <!-- Actions -->
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-2">
-                                        <!-- View in Store -->
                                         <a
                                             v-if="record.url_key"
                                             :href="'{{ url('/') }}/' + record.url_key"
@@ -234,8 +199,6 @@
                                             class="cursor-pointer rounded-md p-1.5 text-xl transition-all hover:bg-gray-200 dark:hover:bg-gray-800 icon-eye"
                                             title="@lang('admin::app.view')"
                                         ></a>
-                                        
-                                        <!-- Edit & Delete Actions -->
                                         <span
                                             class="cursor-pointer rounded-md p-1.5 text-xl transition-all hover:bg-gray-200 dark:hover:bg-gray-800"
                                             :class="action.icon"
@@ -349,32 +312,158 @@
                                     {!! view_render_event('frooxi.admin.catalog.products.create_form.attributes.controls.before') !!}
 
                                     <div
-                                        class="mb-2.5"
+                                        class="mb-4"
                                         v-for="attribute in attributes"
                                     >
-                                        <label
-                                            class="block text-xs font-medium leading-6 text-gray-800 dark:text-white"
-                                            v-text="attribute.name"
-                                        >
-                                        </label>
+                                        <!-- COLOR ATTRIBUTE: custom color name + picker -->
+                                        <template v-if="attribute.code === 'color'">
+                                            <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white mb-1">
+                                                @{{ attribute.name }}
+                                            </label>
 
-                                        <div class="flex min-h-[38px] flex-wrap gap-1 rounded-md border p-1.5 dark:border-gray-800">
-                                            <p
-                                                class="flex items-center rounded bg-gray-600 px-2 py-1 font-semibold text-white"
-                                                v-for="option in attribute.options"
-                                            >
-                                                @{{ option.name }}
-
-                                                <span
-                                                    class="icon-cross cursor-pointer text-lg text-white ltr:ml-1.5 rtl:mr-1.5"
-                                                    @click="removeOption(option)"
+                                            <!-- Selected colors as chips -->
+                                            <div class="flex min-h-[38px] flex-wrap gap-1 rounded-md border p-1.5 dark:border-gray-800 mb-2" v-if="attribute.options.length">
+                                                <p
+                                                    class="flex items-center rounded bg-gray-600 px-2 py-1 font-semibold text-white text-xs"
+                                                    v-for="option in attribute.options"
                                                 >
-                                                </span>
-                                            </p>
-                                        </div>
+                                                    <span
+                                                        v-if="option.swatch_value"
+                                                        class="inline-block w-3 h-3 rounded-full border border-white ltr:mr-1.5 rtl:ml-1.5"
+                                                        :style="{ background: option.swatch_value }"
+                                                    ></span>
+                                                    @{{ option.name }}
+                                                    <span
+                                                        class="icon-cross cursor-pointer text-lg text-white ltr:ml-1.5 rtl:mr-1.5"
+                                                        @click="removeOption(option)"
+                                                    ></span>
+                                                </p>
+                                            </div>
+
+                                            <!-- Add color form -->
+                                            <div class="flex gap-2 items-end">
+                                                <div class="flex-1">
+                                                    <label class="block text-[11px] text-gray-500 mb-0.5">Color Name</label>
+                                                    <input
+                                                        type="text"
+                                                        v-model="newColorName"
+                                                        placeholder="e.g. Navy Blue"
+                                                        class="w-full rounded border border-gray-200 dark:border-gray-700 px-2.5 py-1.5 text-sm dark:bg-gray-900 dark:text-white"
+                                                        @keydown.enter.prevent="addCustomColor(attribute)"
+                                                    />
+                                                </div>
+                                                <div class="w-24">
+                                                    <label class="block text-[11px] text-gray-500 mb-0.5">Color Code</label>
+                                                    <div class="flex items-center gap-1">
+                                                        <input
+                                                            type="color"
+                                                            v-model="newColorCode"
+                                                            class="w-9 h-9 rounded border border-gray-200 dark:border-gray-700 cursor-pointer p-0.5"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            v-model="newColorCode"
+                                                            placeholder="#000000"
+                                                            class="w-full rounded border border-gray-200 dark:border-gray-700 px-2 py-1.5 text-sm dark:bg-gray-900 dark:text-white font-mono"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    class="secondary-button h-9 px-3 whitespace-nowrap"
+                                                    @click="addCustomColor(attribute)"
+                                                >
+                                                    + Add Color
+                                                </button>
+                                            </div>
+                                        </template>
+
+                                        <!-- SIZE ATTRIBUTE: button → size picker popup -->
+                                        <template v-else-if="attribute.code === 'size'">
+                                            <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white mb-1">
+                                                @{{ attribute.name }}
+                                            </label>
+
+                                            <!-- Selected sizes as chips -->
+                                            <div class="flex min-h-[38px] flex-wrap gap-1 rounded-md border p-1.5 dark:border-gray-800 mb-2">
+                                                <p
+                                                    class="flex items-center rounded bg-gray-600 px-2 py-1 font-semibold text-white text-xs"
+                                                    v-for="option in attribute.options"
+                                                >
+                                                    @{{ option.name }}
+                                                    <span
+                                                        class="icon-cross cursor-pointer text-lg text-white ltr:ml-1.5 rtl:mr-1.5"
+                                                        @click="removeOption(option)"
+                                                    ></span>
+                                                </p>
+                                                <p v-if="! attribute.options.length" class="text-xs text-gray-400 px-1 py-1">No sizes selected</p>
+                                            </div>
+
+                                            <!-- Open size picker button -->
+                                            <button
+                                                type="button"
+                                                class="secondary-button text-sm"
+                                                @click="openSizePicker(attribute)"
+                                            >
+                                                Select Sizes
+                                            </button>
+                                        </template>
+
+                                        <!-- OTHER ATTRIBUTES: default chips -->
+                                        <template v-else>
+                                            <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white">
+                                                @{{ attribute.name }}
+                                            </label>
+                                            <div class="flex min-h-[38px] flex-wrap gap-1 rounded-md border p-1.5 dark:border-gray-800">
+                                                <p
+                                                    class="flex items-center rounded bg-gray-600 px-2 py-1 font-semibold text-white"
+                                                    v-for="option in attribute.options"
+                                                >
+                                                    @{{ option.name }}
+                                                    <span
+                                                        class="icon-cross cursor-pointer text-lg text-white ltr:ml-1.5 rtl:mr-1.5"
+                                                        @click="removeOption(option)"
+                                                    ></span>
+                                                </p>
+                                            </div>
+                                        </template>
                                     </div>
 
                                     {!! view_render_event('frooxi.admin.catalog.products.create_form.attributes.controls.after') !!}
+                                </div>
+
+                                <!-- Size Picker Modal (inline overlay) -->
+                                <div
+                                    v-if="showSizePicker"
+                                    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
+                                    @click.self="showSizePicker = false"
+                                >
+                                    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-2xl mx-4 p-6">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Select Sizes</h3>
+                                            <button type="button" class="text-gray-400 hover:text-gray-600" @click="showSizePicker = false">
+                                                <span class="icon-cross text-2xl"></span>
+                                            </button>
+                                        </div>
+
+                                        <div class="flex flex-wrap gap-2 max-h-72 overflow-y-auto mb-4">
+                                            <button
+                                                type="button"
+                                                v-for="option in sizePickerOptions"
+                                                :key="option.id"
+                                                class="px-3 py-1.5 rounded text-sm font-semibold border-2 transition-all"
+                                                :class="isSizeSelected(option) ? 'bg-gray-800 text-white border-gray-800' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:border-gray-600'"
+                                                @click="toggleSizeOption(option)"
+                                            >
+                                                @{{ option.name }}
+                                            </button>
+                                        </div>
+
+                                        <div class="flex justify-end gap-2">
+                                            <button type="button" class="transparent-button hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white" @click="showSizePicker = false">Cancel</button>
+                                            <button type="button" class="primary-button" @click="confirmSizes">Done</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </x-slot>
 
@@ -396,7 +485,8 @@
                                         class="primary-button"
                                         :title="trans('admin::app.catalog.products.index.create.save-btn')"
                                         ::loading="isLoading"
-                                        ::disabled="isLoading"
+                                        ::disabled="isLoading || (attributes.length && ! hasValidSelection())"
+                                        @click="attributes.length ? submitConfigurable() : $el.closest('form').requestSubmit()"
                                     />
                                 </div>
                             </x-slot>
@@ -417,6 +507,16 @@
                         superAttributes: {},
 
                         isLoading: false,
+
+                        // Custom color inputs
+                        newColorName: '',
+                        newColorCode: '#000000',
+
+                        // Size picker state
+                        showSizePicker: false,
+                        sizePickerAttribute: null,
+                        sizePickerOptions: [],
+                        tempSelectedSizes: [],
                     };
                 },
 
@@ -437,8 +537,23 @@
                                 if (response.data.data.redirect_url) {
                                     window.location.href = response.data.data.redirect_url;
                                 } else {
-                                    this.attributes = response.data.data.attributes;
+                                    // Reset all selections when attributes are first loaded
+                                    this.sizePickerOptions = [];
 
+                                    const rawAttributes = response.data.data.attributes;
+
+                                    rawAttributes.forEach(attr => {
+                                        if (attr.code === 'size') {
+                                            // Store all available size options for the picker, start with none selected
+                                            this.sizePickerOptions = attr.options;
+                                            attr.options = [];
+                                        } else if (attr.code === 'color') {
+                                            // Start with no colors selected — user adds custom ones
+                                            attr.options = [];
+                                        }
+                                    });
+
+                                    this.attributes = rawAttributes;
                                     this.setSuperAttributes();
                                 }
                             })
@@ -456,7 +571,13 @@
                             attribute.options = attribute.options.filter(item => item.id != option.id);
                         });
 
-                        this.attributes = this.attributes.filter(attribute => attribute.options.length > 0);
+                        // Only remove attributes that have no options AND are not size/color
+                        // (size and color use custom UIs and start with 0 options intentionally)
+                        this.attributes = this.attributes.filter(attribute =>
+                            attribute.options.length > 0
+                            || attribute.code === 'size'
+                            || attribute.code === 'color'
+                        );
 
                         this.setSuperAttributes();
                     },
@@ -471,7 +592,153 @@
                                 this.superAttributes[attribute.code].push(option.id);
                             });
                         });
-                    }
+                    },
+
+                    // ─── Custom Color Logic ───────────────────────────────────────
+                    addCustomColor(attribute) {
+                        const name = this.newColorName.trim();
+                        const code = this.newColorCode.trim();
+
+                        if (! name) {
+                            this.$emitter.emit('add-flash', { type: 'warning', message: 'Please enter a color name' });
+                            return;
+                        }
+
+                        // Check duplicate by name in current list
+                        const exists = attribute.options.find(o => o.name.toLowerCase() === name.toLowerCase());
+                        if (exists) {
+                            this.$emitter.emit('add-flash', { type: 'warning', message: 'Color "' + name + '" is already added' });
+                            return;
+                        }
+
+                        // Call API to persist the color option and get real DB ID
+                        this.$axios.post("{{ route('admin.api.attributes.color-options') }}", {
+                            name: name,
+                            swatch_value: code,
+                        })
+                        .then(response => {
+                            const opt = response.data.data;
+
+                            attribute.options.push({
+                                id: opt.id,
+                                name: opt.name,
+                                swatch_value: opt.swatch_value || code || null,
+                            });
+
+                            this.superAttributes[attribute.code] = this.superAttributes[attribute.code] || [];
+                            this.superAttributes[attribute.code].push(opt.id);
+
+                            this.newColorName = '';
+                            this.newColorCode = '#000000';
+                        })
+                        .catch(() => {
+                            this.$emitter.emit('add-flash', { type: 'error', message: 'Failed to save color. Please try again.' });
+                        });
+                    },
+
+                    // ─── Size Picker Logic ────────────────────────────────────────
+                    openSizePicker(attribute) {
+                        this.sizePickerAttribute = attribute;
+                        this.tempSelectedSizes = [...attribute.options];
+
+                        // If size options are already loaded from the attribute response, use them directly
+                        if (this.sizePickerOptions.length) {
+                            this.showSizePicker = true;
+                            return;
+                        }
+
+                        // Fallback: fetch from API
+                        this.$axios.get("{{ route('admin.api.attributes.options') }}")
+                            .then(response => {
+                                this.sizePickerOptions = (response.data.data && response.data.data.size)
+                                    ? response.data.data.size
+                                    : [];
+                            })
+                            .catch(() => {
+                                this.sizePickerOptions = attribute.options;
+                            })
+                            .finally(() => {
+                                this.showSizePicker = true;
+                            });
+
+                        return; // will open after fetch
+                    },
+
+                    isSizeSelected(option) {
+                        return this.tempSelectedSizes.some(s => s.id == option.id);
+                    },
+
+                    toggleSizeOption(option) {
+                        const idx = this.tempSelectedSizes.findIndex(s => s.id == option.id);
+                        if (idx >= 0) {
+                            this.tempSelectedSizes.splice(idx, 1);
+                        } else {
+                            this.tempSelectedSizes.push(option);
+                        }
+                    },
+
+                    confirmSizes() {
+                        if (this.sizePickerAttribute) {
+                            this.sizePickerAttribute.options = [...this.tempSelectedSizes];
+                            this.setSuperAttributes();
+                        }
+                        this.showSizePicker = false;
+                    },
+
+                    // ─── Validate that at least one attribute has a selection ─────
+                    hasValidSelection() {
+                        // Must have at least one attribute with at least one selected option
+                        return this.attributes.some(attr => {
+                            const ids = this.superAttributes[attr.code];
+                            return ids && ids.length > 0;
+                        });
+                    },
+
+                    // ─── Submit the configurable product form ─────────────────────
+                    submitConfigurable() {
+                        if (this.isLoading) return;
+
+                        // Build super_attributes from current selections
+                        const superAttrs = {};
+                        this.attributes.forEach(attr => {
+                            const ids = this.superAttributes[attr.code];
+                            if (ids && ids.length > 0) {
+                                superAttrs[attr.code] = ids;
+                            }
+                        });
+
+                        if (Object.keys(superAttrs).length === 0) {
+                            this.$emitter.emit('add-flash', { type: 'warning', message: 'Please select at least one size or color.' });
+                            return;
+                        }
+
+                        this.isLoading = true;
+
+                        // Gather the existing form params (type, sku, attribute_family_id)
+                        // They are stored in hidden inputs inside the form
+                        const form = this.$el.querySelector('form');
+                        const formData = new FormData(form);
+                        const params = {};
+                        formData.forEach((value, key) => { params[key] = value; });
+
+                        params.super_attributes = superAttrs;
+
+                        this.$axios.post("{{ route('admin.catalog.products.store') }}", params)
+                            .then((response) => {
+                                this.isLoading = false;
+
+                                if (response.data.data.redirect_url) {
+                                    window.location.href = response.data.data.redirect_url;
+                                } else {
+                                    this.$emitter.emit('add-flash', { type: 'error', message: 'Unexpected response from server.' });
+                                }
+                            })
+                            .catch(error => {
+                                this.isLoading = false;
+                                const msg = error.response?.data?.message || 'Failed to save product. Please try again.';
+                                this.$emitter.emit('add-flash', { type: 'error', message: msg });
+                            });
+                    },
                 }
             })
         </script>
