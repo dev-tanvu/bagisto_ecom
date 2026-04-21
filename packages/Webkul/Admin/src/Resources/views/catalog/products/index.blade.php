@@ -317,9 +317,16 @@
                                     >
                                         <!-- COLOR ATTRIBUTE: custom color name + picker -->
                                         <template v-if="attribute.code === 'color'">
-                                            <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white mb-1">
-                                                @{{ attribute.name }}
-                                            </label>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white">
+                                                    @{{ attribute.name }}
+                                                </label>
+                                                <span
+                                                    class="icon-cross cursor-pointer text-lg text-gray-400 hover:text-red-500"
+                                                    title="Remove this attribute"
+                                                    @click="removeAttribute(attribute)"
+                                                ></span>
+                                            </div>
 
                                             <!-- Selected colors as chips -->
                                             <div class="flex min-h-[38px] flex-wrap gap-1 rounded-md border p-1.5 dark:border-gray-800 mb-2" v-if="attribute.options.length">
@@ -380,9 +387,16 @@
 
                                         <!-- SIZE ATTRIBUTE: button → size picker popup -->
                                         <template v-else-if="attribute.code === 'size'">
-                                            <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white mb-1">
-                                                @{{ attribute.name }}
-                                            </label>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white">
+                                                    @{{ attribute.name }}
+                                                </label>
+                                                <span
+                                                    class="icon-cross cursor-pointer text-lg text-gray-400 hover:text-red-500"
+                                                    title="Remove this attribute"
+                                                    @click="removeAttribute(attribute)"
+                                                ></span>
+                                            </div>
 
                                             <!-- Selected sizes as chips -->
                                             <div class="flex min-h-[38px] flex-wrap gap-1 rounded-md border p-1.5 dark:border-gray-800 mb-2">
@@ -411,9 +425,16 @@
 
                                         <!-- OTHER ATTRIBUTES: default chips -->
                                         <template v-else>
-                                            <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white">
-                                                @{{ attribute.name }}
-                                            </label>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white">
+                                                    @{{ attribute.name }}
+                                                </label>
+                                                <span
+                                                    class="icon-cross cursor-pointer text-lg text-gray-400 hover:text-red-500"
+                                                    title="Remove this attribute"
+                                                    @click="removeAttribute(attribute)"
+                                                ></span>
+                                            </div>
                                             <div class="flex min-h-[38px] flex-wrap gap-1 rounded-md border p-1.5 dark:border-gray-800">
                                                 <p
                                                     class="flex items-center rounded bg-gray-600 px-2 py-1 font-semibold text-white"
@@ -571,14 +592,15 @@
                             attribute.options = attribute.options.filter(item => item.id != option.id);
                         });
 
-                        // Only remove attributes that have no options AND are not size/color
-                        // (size and color use custom UIs and start with 0 options intentionally)
-                        this.attributes = this.attributes.filter(attribute =>
-                            attribute.options.length > 0
-                            || attribute.code === 'size'
-                            || attribute.code === 'color'
-                        );
+                        // Remove attributes that have no options left
+                        // (color and size no longer get a special pass — user must explicitly keep them)
+                        this.attributes = this.attributes.filter(attribute => attribute.options.length > 0);
 
+                        this.setSuperAttributes();
+                    },
+
+                    removeAttribute(attribute) {
+                        this.attributes = this.attributes.filter(a => a.code !== attribute.code);
                         this.setSuperAttributes();
                     },
 
@@ -687,8 +709,7 @@
 
                     // ─── Validate that at least one attribute has a selection ─────
                     hasValidSelection() {
-                        // Must have at least one attribute with at least one selected option
-                        return this.attributes.some(attr => {
+                        return this.attributes.length > 0 && this.attributes.some(attr => {
                             const ids = this.superAttributes[attr.code];
                             return ids && ids.length > 0;
                         });

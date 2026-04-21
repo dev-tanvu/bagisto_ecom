@@ -91,71 +91,207 @@
                 </div>
             </template>
 
-            <!-- Add Variant Form Modal -->
-            <x-admin::form
-                v-slot="{ meta, errors, handleSubmit }"
-                as="div"
-            >
-                <form @submit="handleSubmit($event, addVariant)">
-                    <!-- Customer Create Modal -->
-                    <x-admin::modal ref="variantCreateModal">
-                        <!-- Modal Header -->
-                        <x-slot:header>
-                            <p class="text-lg font-bold text-gray-800 dark:text-white">
-                                @lang('admin::app.catalog.products.edit.types.configurable.create.title')
-                            </p>
-                        </x-slot>
-        
-                        <!-- Modal Content -->
-                        <x-slot:content>
-                            <x-admin::form.control-group
-                                v-for='(attribute, index) in superAttributes'
+            <!-- Add Variant Form Modal (custom color picker + size modal) -->
+            <x-admin::modal ref="variantCreateModal">
+                <!-- Modal Header -->
+                <x-slot:header>
+                    <p class="text-lg font-bold text-gray-800 dark:text-white">
+                        @lang('admin::app.catalog.products.edit.types.configurable.create.title')
+                    </p>
+                </x-slot>
+    
+                <!-- Modal Content -->
+                <x-slot:content>
+                    <div
+                        class="mb-4"
+                        v-for="attribute in superAttributes"
+                        :key="attribute.id"
+                    >
+                        <!-- COLOR ATTRIBUTE -->
+                        <template v-if="attribute.code === 'color'">
+                            <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white mb-1">
+                                @{{ attribute.admin_name }}
+                            </label>
+
+                            <!-- Currently selected color -->
+                            <div class="flex flex-wrap gap-1 mb-2" v-if="variantSelection[attribute.code]">
+                                <p class="flex items-center rounded bg-gray-600 px-2 py-1 font-semibold text-white text-xs">
+                                    <span
+                                        v-if="getOptionById(attribute, variantSelection[attribute.code]).swatch_value"
+                                        class="inline-block w-3 h-3 rounded-full border border-white ltr:mr-1.5 rtl:ml-1.5"
+                                        :style="{ background: getOptionById(attribute, variantSelection[attribute.code]).swatch_value }"
+                                    ></span>
+                                    @{{ getOptionById(attribute, variantSelection[attribute.code]).admin_name || getOptionById(attribute, variantSelection[attribute.code]).name }}
+                                    <span
+                                        class="icon-cross cursor-pointer text-lg text-white ltr:ml-1.5 rtl:mr-1.5"
+                                        @click="variantSelection[attribute.code] = null"
+                                    ></span>
+                                </p>
+                            </div>
+
+                            <!-- Add new color form -->
+                            <div v-if="! variantSelection[attribute.code]" class="flex gap-2 items-end">
+                                <div class="flex-1">
+                                    <label class="block text-[11px] text-gray-500 mb-0.5">Color Name</label>
+                                    <input
+                                        type="text"
+                                        v-model="variantNewColorName"
+                                        placeholder="e.g. Navy Blue"
+                                        class="w-full rounded border border-gray-200 dark:border-gray-700 px-2.5 py-1.5 text-sm dark:bg-gray-900 dark:text-white"
+                                        @keydown.enter.prevent="addVariantColor(attribute)"
+                                    />
+                                </div>
+                                <div class="w-24">
+                                    <label class="block text-[11px] text-gray-500 mb-0.5">Color Code</label>
+                                    <div class="flex items-center gap-1">
+                                        <input
+                                            type="color"
+                                            v-model="variantNewColorCode"
+                                            class="w-9 h-9 rounded border border-gray-200 dark:border-gray-700 cursor-pointer p-0.5"
+                                        />
+                                        <input
+                                            type="text"
+                                            v-model="variantNewColorCode"
+                                            placeholder="#000000"
+                                            class="w-full rounded border border-gray-200 dark:border-gray-700 px-2 py-1.5 text-sm dark:bg-gray-900 dark:text-white font-mono"
+                                        />
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="secondary-button h-9 px-3 whitespace-nowrap"
+                                    @click="addVariantColor(attribute)"
+                                >
+                                    + Add Color
+                                </button>
+                            </div>
+
+                            <!-- Or pick from existing -->
+                            <div v-if="! variantSelection[attribute.code] && attribute.options && attribute.options.length" class="mt-2">
+                                <p class="text-[11px] text-gray-400 mb-1">Or pick existing:</p>
+                                <div class="flex flex-wrap gap-1">
+                                    <button
+                                        type="button"
+                                        v-for="opt in attribute.options"
+                                        :key="opt.id"
+                                        class="flex items-center gap-1 px-2 py-1 rounded border text-xs font-semibold transition-all border-gray-300 hover:border-gray-600"
+                                        @click="variantSelection[attribute.code] = opt.id"
+                                    >
+                                        <span
+                                            v-if="opt.swatch_value"
+                                            class="inline-block w-3 h-3 rounded-full border border-gray-300"
+                                            :style="{ background: opt.swatch_value }"
+                                        ></span>
+                                        @{{ opt.admin_name || opt.name }}
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- SIZE ATTRIBUTE -->
+                        <template v-else-if="attribute.code === 'size'">
+                            <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white mb-1">
+                                @{{ attribute.admin_name }}
+                            </label>
+
+                            <!-- Currently selected size -->
+                            <div class="flex flex-wrap gap-1 mb-2" v-if="variantSelection[attribute.code]">
+                                <p class="flex items-center rounded bg-gray-600 px-2 py-1 font-semibold text-white text-xs">
+                                    @{{ getOptionById(attribute, variantSelection[attribute.code]).admin_name || getOptionById(attribute, variantSelection[attribute.code]).name }}
+                                    <span
+                                        class="icon-cross cursor-pointer text-lg text-white ltr:ml-1.5 rtl:mr-1.5"
+                                        @click="variantSelection[attribute.code] = null"
+                                    ></span>
+                                </p>
+                            </div>
+
+                            <!-- Open size picker button -->
+                            <button
+                                type="button"
+                                class="secondary-button text-sm"
+                                @click="openVariantSizePicker(attribute)"
                             >
-                                <x-admin::form.control-group.label class="required">
-                                    @{{ attribute.admin_name }}
-                                </x-admin::form.control-group.label>
+                                {{ variantSelection[attribute.code] ? 'Change Size' : 'Select Size' }}
+                            </button>
+                        </template>
 
-                                <v-field
-                                    as="select"
-                                    :name="attribute.code"
-                                    class="custom-select flex min-h-[39px] w-full rounded-md border bg-white px-3 py-1.5 text-sm font-normal text-gray-600 transition-all hover:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
-                                    :class="[errors[attribute.code] ? 'border border-red-500' : '']"
-                                    rules="required"
-                                    :label="attribute.admin_name"
+                        <!-- OTHER ATTRIBUTES: dropdown -->
+                        <template v-else>
+                            <label class="block text-xs font-medium leading-6 text-gray-800 dark:text-white mb-1">
+                                @{{ attribute.admin_name }}
+                            </label>
+                            <select
+                                v-model="variantSelection[attribute.code]"
+                                class="custom-select flex min-h-[39px] w-full rounded-md border bg-white px-3 py-1.5 text-sm font-normal text-gray-600 transition-all hover:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
+                            >
+                                <option :value="null" disabled>-- Select --</option>
+                                <option
+                                    v-for="option in attribute.options"
+                                    :key="option.id"
+                                    :value="option.id"
                                 >
-                                    <option
-                                        v-for="option in attribute.options"
-                                        :value="option.id"
-                                    >
-                                        @{{ option.admin_name }}
-                                    </option>
-                                </v-field>
+                                    @{{ option.admin_name || option.name }}
+                                </option>
+                            </select>
+                        </template>
+                    </div>
 
-                                <v-error-message
-                                    :name="attribute.code"
-                                    v-slot="{ message }"
+                    <!-- Size Picker Modal (inline overlay) -->
+                    <div
+                        v-if="showVariantSizePicker"
+                        class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
+                        @click.self="showVariantSizePicker = false"
+                    >
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-2xl mx-4 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-gray-800 dark:text-white">Select Size</h3>
+                                <button type="button" class="text-gray-400 hover:text-gray-600" @click="showVariantSizePicker = false">
+                                    <span class="icon-cross text-2xl"></span>
+                                </button>
+                            </div>
+
+                            <div class="flex flex-wrap gap-2 max-h-72 overflow-y-auto mb-4">
+                                <button
+                                    type="button"
+                                    v-for="option in variantSizePickerOptions"
+                                    :key="option.id"
+                                    class="px-3 py-1.5 rounded text-sm font-semibold border-2 transition-all"
+                                    :class="variantTempSize && variantTempSize.id == option.id ? 'bg-gray-800 text-white border-gray-800' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:border-gray-600'"
+                                    @click="variantTempSize = option"
                                 >
-                                    <p
-                                        class="mt-1 text-xs italic text-red-600"
-                                        v-text="message"
-                                    >
-                                    </p>
-                                </v-error-message>
-                            </x-admin::form.control-group>
-                        </x-slot>
-        
-                        <!-- Modal Footer -->
-                        <x-slot:footer>
-                            <!-- Save Button -->
-                            <x-admin::button
-                                button-type="button"
-                                class="primary-button"
-                                :title="trans('admin::app.catalog.products.edit.types.configurable.create.save-btn')"
-                            />
-                        </x-slot>
-                    </x-admin::modal>
-                </form>
-            </x-admin::form>
+                                    @{{ option.admin_name || option.name }}
+                                </button>
+                            </div>
+
+                            <div class="flex justify-end gap-2">
+                                <button type="button" class="transparent-button hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white" @click="showVariantSizePicker = false">Cancel</button>
+                                <button type="button" class="primary-button" @click="confirmVariantSize">Select</button>
+                            </div>
+                        </div>
+                    </div>
+                </x-slot>
+    
+                <!-- Modal Footer -->
+                <x-slot:footer>
+                    <div class="flex items-center gap-x-2.5">
+                        <button
+                            type="button"
+                            class="transparent-button hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800"
+                            @click="$refs.variantCreateModal.close()"
+                        >
+                            @lang('admin::app.catalog.products.index.create.back-btn')
+                        </button>
+                        <button
+                            type="button"
+                            class="primary-button"
+                            :disabled="! isVariantSelectionComplete()"
+                            @click="submitVariant"
+                        >
+                            @lang('admin::app.catalog.products.edit.types.configurable.create.save-btn')
+                        </button>
+                    </div>
+                </x-slot>
+            </x-admin::modal>
         </div>
     </script>
 
@@ -1035,6 +1171,15 @@
                         inventories: {},
                         images: []
                     },
+
+                    // Variant creation state
+                    variantSelection: {},
+                    variantNewColorName: '',
+                    variantNewColorCode: '#000000',
+                    showVariantSizePicker: false,
+                    variantSizePickerAttribute: null,
+                    variantSizePickerOptions: [],
+                    variantTempSize: null,
                 }
             },
 
@@ -1071,9 +1216,125 @@
                         images: []
                     }, params));
 
-                    resetForm();
+                    this.$refs.variantCreateModal.close();
+                },
+
+                submitVariant() {
+                    if (! this.isVariantSelectionComplete()) return;
+
+                    const params = { ...this.variantSelection };
+
+                    // Check duplicate
+                    const isDuplicate = this.variants.some(variant => {
+                        return this.superAttributes.every(attr => variant[attr.code] == params[attr.code]);
+                    });
+
+                    if (isDuplicate) {
+                        this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('admin::app.catalog.products.edit.types.configurable.create.variant-already-exists')" });
+                        return;
+                    }
+
+                    const optionIds = Object.values(params);
+
+                    this.variants.push(Object.assign({
+                        id: 'variant_' + this.variants.length,
+                        sku: '{{ $product->sku }}' + '-variant-' + optionIds.join('-'),
+                        name: '',
+                        price: 0,
+                        status: 1,
+                        weight: 0,
+                        inventories: {},
+                        images: [],
+                    }, params));
+
+                    // Reset state
+                    this.variantSelection = {};
+                    this.variantNewColorName = '';
+                    this.variantNewColorCode = '#000000';
 
                     this.$refs.variantCreateModal.close();
+                },
+
+                isVariantSelectionComplete() {
+                    return this.superAttributes.every(attr => {
+                        const val = this.variantSelection[attr.code];
+                        return val !== null && val !== undefined;
+                    });
+                },
+
+                getOptionById(attribute, id) {
+                    if (! id) return {};
+                    return attribute.options.find(o => o.id == id) || {};
+                },
+
+                // ─── Add color on-the-fly ──────────────────────────────
+                addVariantColor(attribute) {
+                    const name = this.variantNewColorName.trim();
+                    const code = this.variantNewColorCode.trim();
+
+                    if (! name) {
+                        this.$emitter.emit('add-flash', { type: 'warning', message: 'Please enter a color name' });
+                        return;
+                    }
+
+                    this.$axios.post("{{ route('admin.api.attributes.color-options') }}", {
+                        name: name,
+                        swatch_value: code,
+                    })
+                    .then(response => {
+                        const opt = response.data.data;
+
+                        attribute.options.push({
+                            id: opt.id,
+                            admin_name: opt.name,
+                            name: opt.name,
+                            swatch_value: opt.swatch_value || code || null,
+                        });
+
+                        // Auto-select the new color
+                        this.variantSelection[attribute.code] = opt.id;
+
+                        this.variantNewColorName = '';
+                        this.variantNewColorCode = '#000000';
+                    })
+                    .catch(() => {
+                        this.$emitter.emit('add-flash', { type: 'error', message: 'Failed to save color. Please try again.' });
+                    });
+                },
+
+                // ─── Size picker ───────────────────────────────────────
+                openVariantSizePicker(attribute) {
+                    this.variantSizePickerAttribute = attribute;
+                    this.variantTempSize = attribute.options.find(o => o.id == this.variantSelection[attribute.code]) || null;
+
+                    if (attribute.options && attribute.options.length) {
+                        this.variantSizePickerOptions = attribute.options;
+                        this.showVariantSizePicker = true;
+                        return;
+                    }
+
+                    // Fallback: fetch from API
+                    this.$axios.get("{{ route('admin.api.attributes.options') }}")
+                        .then(response => {
+                            this.variantSizePickerOptions = (response.data.data && response.data.data.size)
+                                ? response.data.data.size
+                                : [];
+                            // Sync back to attribute options
+                            attribute.options = this.variantSizePickerOptions;
+                        })
+                        .catch(() => {
+                            this.variantSizePickerOptions = attribute.options;
+                        })
+                        .finally(() => {
+                            this.showVariantSizePicker = true;
+                        });
+                },
+
+                confirmVariantSize() {
+                    if (this.variantTempSize && this.variantSizePickerAttribute) {
+                        this.variantSelection[this.variantSizePickerAttribute.code] = this.variantTempSize.id;
+                    }
+                    this.showVariantSizePicker = false;
                 },
 
                 removeVariant(variant) {

@@ -43,6 +43,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(except: [
             'stripe/*',
+            'checkout/sslcommerz/success',
+            'checkout/sslcommerz/fail',
+            'checkout/sslcommerz/cancel',
+            'checkout/sslcommerz/ipn',
         ]);
 
         $middleware->trustProxies(at: '*');

@@ -1005,6 +1005,11 @@ return [
             'missing-fields' => 'Some required fields missing for this product.',
             'missing-options' => 'Options are missing for this product.',
             'paypal-payment-cancelled' => 'Paypal payment has been cancelled.',
+            'sslcommerz' => [
+                'payment-failed'    => 'Payment failed. Please try again or choose a different payment method.',
+                'payment-cancelled'  => 'Payment was cancelled. Your cart has been preserved.',
+                'payment-error'     => 'An error occurred during payment processing. Please try again.',
+            ],
             'qty-missing' => 'At least one product should have more than 1 quantity.',
             'return-to-shop' => 'Return To Shop',
             'rule-applied' => 'Cart rule applied',

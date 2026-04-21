@@ -167,10 +167,10 @@ class OrderController extends Controller
     public function cancel(int $id)
     {
         $order = $this->orderRepository->findOrFail($id);
-        
+
         // Return inventory before deleting
         $this->returnInventoryForOrder($order);
-        
+
         // Delete the order
         $order->delete();
 
@@ -185,7 +185,7 @@ class OrderController extends Controller
      */
     protected function returnInventoryForOrder($order): void
     {
-        \Log::info('Returning inventory for cancelled order #' . $order->id);
+        \Log::info('Returning inventory for cancelled order #'.$order->id);
 
         $channelInventorySourceIds = $order->channel->inventory_sources->where('status', 1)->pluck('id');
 
@@ -223,7 +223,7 @@ class OrderController extends Controller
             if ($orderedInventory) {
                 $newOrderedQty = max(0, $orderedInventory->qty - $qty);
                 $orderedInventory->update(['qty' => $newOrderedQty]);
-                \Log::info('Returned ordered_inventory: new qty=' . $newOrderedQty);
+                \Log::info('Returned ordered_inventory: new qty='.$newOrderedQty);
             }
 
             // Return to actual product_inventories
@@ -235,13 +235,13 @@ class OrderController extends Controller
                 if ($inventory) {
                     $newQty = $inventory->qty + $qty;
                     $inventory->update(['qty' => $newQty]);
-                    \Log::info('Returned ' . $qty . ' to inventory source #' . $inventorySourceId . ', new qty=' . $newQty);
+                    \Log::info('Returned '.$qty.' to inventory source #'.$inventorySourceId.', new qty='.$newQty);
                     break;
                 }
             }
         }
 
-        \Log::info('Inventory return complete for cancelled order #' . $order->id);
+        \Log::info('Inventory return complete for cancelled order #'.$order->id);
     }
 
     /**
@@ -277,7 +277,14 @@ class OrderController extends Controller
     public function updateStatus(int $id)
     {
         $order = $this->orderRepository->findOrFail($id);
-        
+
+        // These statuses are terminal or payment-controlled — not manually editable
+        if (in_array($order->status, ['canceled', 'pending_payment', 'completed', 'closed'])) {
+            return response()->json([
+                'message' => trans('admin::app.sales.orders.update-status-not-allowed'),
+            ], 422);
+        }
+
         $validated = request()->validate([
             'status' => 'required|in:pending,processing,shipped',
         ]);
@@ -290,19 +297,19 @@ class OrderController extends Controller
             return response()->json(['message' => trans('admin::app.sales.orders.update-status-success')]);
         }
 
-        \Log::info('Order #' . $id . ' status changing from ' . $oldStatus . ' to ' . $newStatus);
+        \Log::info('Order #'.$id.' status changing from '.$oldStatus.' to '.$newStatus);
 
-        $stockReducedStatuses  = ['processing', 'shipped'];
+        $stockReducedStatuses = ['processing', 'shipped'];
         $wasStockReduced = in_array($oldStatus, $stockReducedStatuses);
         $willReduceStock = in_array($newStatus, $stockReducedStatuses);
 
         if (! $wasStockReduced && $willReduceStock) {
             // pending → processing/shipped: deduct stock
-            \Log::info('Triggering inventory reduction for order #' . $id);
+            \Log::info('Triggering inventory reduction for order #'.$id);
             $this->reduceInventoryForOrder($order);
         } elseif ($wasStockReduced && ! $willReduceStock) {
             // processing/shipped → pending: return stock
-            \Log::info('Triggering inventory return for order #' . $id);
+            \Log::info('Triggering inventory return for order #'.$id);
             $this->addInventoryForOrder($order);
         }
 
@@ -322,33 +329,36 @@ class OrderController extends Controller
      */
     protected function reduceInventoryForOrder($order): void
     {
-        \Log::info('Starting inventory reduction for order #' . $order->id);
+        \Log::info('Starting inventory reduction for order #'.$order->id);
 
         $channelInventorySourceIds = $order->channel->inventory_sources->where('status', 1)->pluck('id');
-        \Log::info('Active inventory sources: ' . $channelInventorySourceIds->implode(', '));
+        \Log::info('Active inventory sources: '.$channelInventorySourceIds->implode(', '));
 
         // Use all_items (includes child variant items); items() filters out parent_id IS NOT NULL
         $allItems = $order->all_items;
 
         foreach ($allItems as $item) {
-            \Log::info('Processing order item #' . $item->id . ' type=' . $item->type);
+            \Log::info('Processing order item #'.$item->id.' type='.$item->type);
 
             // Skip configurable parent items — inventory lives on the variant (child)
             if ($item->type === 'configurable') {
-                \Log::info('Skipping configurable parent item #' . $item->id);
+                \Log::info('Skipping configurable parent item #'.$item->id);
+
                 continue;
             }
 
             $product = $item->product;
 
             if (! $product) {
-                \Log::info('Skipping item #' . $item->id . ' - no product found');
+                \Log::info('Skipping item #'.$item->id.' - no product found');
+
                 continue;
             }
 
             // Check manage_stock (stored in product_flat, accessible via model attribute)
             if (! $product->manage_stock) {
-                \Log::info('Skipping item #' . $item->id . ' - product does not manage stock');
+                \Log::info('Skipping item #'.$item->id.' - product does not manage stock');
+
                 continue;
             }
 
@@ -358,15 +368,16 @@ class OrderController extends Controller
             if ($qty <= 0 && $item->parent_id) {
                 $parentItem = $allItems->firstWhere('id', $item->parent_id);
                 $qty = (int) ($parentItem?->qty_ordered ?? 0);
-                \Log::info('Child item qty was 0, using parent qty: ' . $qty);
+                \Log::info('Child item qty was 0, using parent qty: '.$qty);
             }
 
             if ($qty <= 0) {
-                \Log::info('Skipping item #' . $item->id . ' - qty is 0 or less');
+                \Log::info('Skipping item #'.$item->id.' - qty is 0 or less');
+
                 continue;
             }
 
-            \Log::info('Reducing inventory by ' . $qty . ' for product #' . $product->id . ' (item #' . $item->id . ')');
+            \Log::info('Reducing inventory by '.$qty.' for product #'.$product->id.' (item #'.$item->id.')');
 
             // Reduce from ordered_inventories (reserved quantity)
             $orderedInventory = $product->ordered_inventories()
@@ -375,7 +386,7 @@ class OrderController extends Controller
 
             if ($orderedInventory) {
                 $newOrderedQty = max(0, $orderedInventory->qty - $qty);
-                \Log::info('ordered_inventory: ' . $orderedInventory->qty . ' → ' . $newOrderedQty);
+                \Log::info('ordered_inventory: '.$orderedInventory->qty.' → '.$newOrderedQty);
                 $orderedInventory->update(['qty' => $newOrderedQty]);
             }
 
@@ -389,7 +400,7 @@ class OrderController extends Controller
                 if ($inventory && $inventory->qty > 0) {
                     $reduceQty = min($remaining, $inventory->qty);
                     $newQty = $inventory->qty - $reduceQty;
-                    \Log::info('inventory source #' . $inventorySourceId . ': ' . $inventory->qty . ' → ' . $newQty);
+                    \Log::info('inventory source #'.$inventorySourceId.': '.$inventory->qty.' → '.$newQty);
                     $inventory->update(['qty' => $newQty]);
                     $remaining -= $reduceQty;
 
@@ -400,11 +411,11 @@ class OrderController extends Controller
             }
 
             if ($remaining > 0) {
-                \Log::warning('Could not fully reduce inventory for product #' . $product->id . '. Remaining: ' . $remaining);
+                \Log::warning('Could not fully reduce inventory for product #'.$product->id.'. Remaining: '.$remaining);
             }
         }
 
-        \Log::info('Inventory reduction complete for order #' . $order->id);
+        \Log::info('Inventory reduction complete for order #'.$order->id);
     }
 
     /**
@@ -413,7 +424,7 @@ class OrderController extends Controller
      */
     protected function addInventoryForOrder($order): void
     {
-        \Log::info('Restoring inventory for order #' . $order->id);
+        \Log::info('Restoring inventory for order #'.$order->id);
 
         $channelInventorySourceIds = $order->channel->inventory_sources->where('status', 1)->pluck('id');
         $allItems = $order->all_items;
@@ -433,14 +444,14 @@ class OrderController extends Controller
             if ($qty <= 0 && $item->parent_id) {
                 $parentItem = $allItems->firstWhere('id', $item->parent_id);
                 $qty = (int) ($parentItem?->qty_ordered ?? 0);
-                \Log::info('Child item qty was 0, using parent qty: ' . $qty);
+                \Log::info('Child item qty was 0, using parent qty: '.$qty);
             }
 
             if ($qty <= 0) {
                 continue;
             }
 
-            \Log::info('Restoring ' . $qty . ' units for product #' . $product->id . ' (item #' . $item->id . ')');
+            \Log::info('Restoring '.$qty.' units for product #'.$product->id.' (item #'.$item->id.')');
 
             // Restore to actual product_inventories (first active source)
             foreach ($channelInventorySourceIds as $inventorySourceId) {
@@ -451,13 +462,13 @@ class OrderController extends Controller
                 if ($inventory) {
                     $newQty = $inventory->qty + $qty;
                     $inventory->update(['qty' => $newQty]);
-                    \Log::info('Restored inventory source #' . $inventorySourceId . ': ' . $inventory->qty . ' → ' . $newQty);
+                    \Log::info('Restored inventory source #'.$inventorySourceId.': '.$inventory->qty.' → '.$newQty);
                     break;
                 }
             }
         }
 
-        \Log::info('Inventory restore complete for order #' . $order->id);
+        \Log::info('Inventory restore complete for order #'.$order->id);
     }
 
     /**
