@@ -116,19 +116,32 @@
                         </p>
                     </div>
     
-                    <!-- Status Dropdown (styled badge) -->
+                    <!-- Status: read-only badge for terminal statuses, dropdown for editable ones -->
                     <div style="width: fit-content;">
-                        <select
-                            class="order-status-badge"
-                            :class="'status-' + record.status"
-                            :value="record.status"
-                            :data-order-id="record.id"
-                            onchange="window.updateOrderStatus(this)"
-                        >
-                            <option value="pending">@lang('admin::app.sales.orders.index.datagrid.pending')</option>
-                            <option value="processing">@lang('admin::app.sales.orders.index.datagrid.processing')</option>
-                            <option value="shipped">@lang('admin::app.sales.orders.index.datagrid.shipped')</option>
-                        </select>
+                        <template v-if="['canceled', 'pending_payment', 'completed', 'closed'].includes(record.status)">
+                            <span
+                                class="order-status-static"
+                                :class="'status-' + record.status"
+                            >
+                                <template v-if="record.status === 'canceled'">Canceled</template>
+                                <template v-else-if="record.status === 'pending_payment'">Pending Payment</template>
+                                <template v-else-if="record.status === 'completed'">Completed</template>
+                                <template v-else-if="record.status === 'closed'">Closed</template>
+                            </span>
+                        </template>
+                        <template v-else>
+                            <select
+                                class="order-status-badge"
+                                :class="'status-' + record.status"
+                                :value="record.status"
+                                :data-order-id="record.id"
+                                onchange="window.updateOrderStatus(this)"
+                            >
+                                <option value="pending">@lang('admin::app.sales.orders.index.datagrid.pending')</option>
+                                <option value="processing">@lang('admin::app.sales.orders.index.datagrid.processing')</option>
+                                <option value="shipped">@lang('admin::app.sales.orders.index.datagrid.shipped')</option>
+                            </select>
+                        </template>
                     </div>
     
                     <!-- Customer + Email -->
@@ -197,9 +210,22 @@
                 transition: opacity .15s;
             }
             .order-status-badge:hover { opacity: .85; }
-            .status-pending    { background: #fef3c7; color: #92400e; }
-            .status-processing { background: #dbeafe; color: #1e40af; }
-            .status-shipped    { background: #d1fae5; color: #065f46; }
+            .order-status-static {
+                display: inline-flex;
+                align-items: center;
+                padding: 4px 10px;
+                border-radius: 9999px;
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 0.03em;
+                cursor: default;
+                user-select: none;
+            }
+            .status-pending         { background: #fef3c7; color: #92400e; }
+            .status-processing      { background: #dbeafe; color: #1e40af; }
+            .status-shipped         { background: #d1fae5; color: #065f46; }
+            .status-canceled        { background: #fee2e2; color: #991b1b; }
+            .status-pending_payment { background: #f3f4f6; color: #6b7280; }
         </style>
         <script
             type="text/x-template"

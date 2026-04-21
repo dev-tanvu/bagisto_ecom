@@ -14,12 +14,14 @@ class SSLCommerz extends Payment
     /**
      * Get redirect url.
      *
+     * Returning this route triggers the SSLCommerz hosted payment flow.
+     * The SSLCommerzController will call the API and redirect to the gateway.
+     *
      * @return string
      */
     public function getRedirectUrl()
     {
-        // TODO: Integrate SSLCommerz API
-        return route('shop.checkout.onepage.success');
+        return route('shop.sslcommerz.pay');
     }
 
     /**

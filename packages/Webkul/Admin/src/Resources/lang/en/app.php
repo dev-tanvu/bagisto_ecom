@@ -173,7 +173,8 @@ return [
 
     'sales' => [
         'orders' => [
-            'update-status-success' => 'Order status updated successfully.',
+            'update-status-success'     => 'Order status updated successfully.',
+            'update-status-not-allowed' => 'This order status cannot be changed manually.',
             'index' => [
                 'create-btn' => 'Create Order',
                 'title' => 'Orders',
@@ -4822,6 +4823,12 @@ return [
                     'set-invoice-status' => 'Set the invoice status after creating the invoice to',
                     'set-order-status' => 'Set the order status after creating the invoice to',
                     'sort-order' => 'Sort Order',
+                    'sslcommerz' => 'SSLCommerz',
+                    'sslcommerz-info' => 'SSLCommerz is a leading Bangladeshi payment gateway supporting cards, mobile banking (bKash, Nagad, Rocket), and internet banking.',
+                    'sslcommerz-sandbox' => 'Sandbox Mode',
+                    'sslcommerz-sandbox-info' => 'Enable for testing with sandbox credentials. Disable for live payments.',
+                    'sslcommerz-store-id' => 'Store ID',
+                    'sslcommerz-store-pass' => 'Store Password',
                     'statement-descriptor' => 'Statement Descriptor',
                     'status' => 'Status',
                     'stripe' => 'Stripe',
